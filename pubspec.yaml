@@ -1,0 +1,57 @@
+name: kafela
+description: "A Flutter application for Kafela management system"
+publish_to: 'none'  
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^0.55.2
+  cupertino_icons: ^1.0.8
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.17.3
+  google_fonts: ^6.1.0
+  cloud_firestore: ^4.15.0
+  firebase_storage: ^11.2.0  
+  image_picker: ^1.0.4
+
+  intl: ^0.18.1
+  provider: ^6.1.1
+  syncfusion_flutter_charts: ^23.1.44
+  flutter_launcher_icons: ^0.13.1
+  io: ^1.0.5
+  cached_network_image: ^3.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Libertinus
+      fonts:
+        - asset: assets/fonts/LibertinusSans-Regular.ttf
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
