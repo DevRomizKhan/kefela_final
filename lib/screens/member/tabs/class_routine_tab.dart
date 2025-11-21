@@ -13,9 +13,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, List<Map<String, dynamic>>> _allRoutines = {};
   bool _isLoading = true;
-  final List<String> _days = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-  ];
+  List<String> _availableDays = []; // Will contain only days that have classes
 
   @override
   void initState() {
@@ -32,6 +30,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
           .get();
 
       Map<String, List<Map<String, dynamic>>> routinesMap = {};
+      List<String> availableDays = [];
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
@@ -39,6 +38,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
 
         if (!routinesMap.containsKey(day)) {
           routinesMap[day] = [];
+          availableDays.add(day);
         }
 
         routinesMap[day]!.add({
@@ -52,8 +52,22 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
         });
       }
 
+      // Sort available days according to week order
+      final dayOrder = {
+        'Monday': 4,
+        'Tuesday': 5,
+        'Wednesday': 6,
+        'Thursday': 7,
+        'Friday': 1,
+        'Saturday': 2,
+        'Sunday': 3,
+      };
+
+      availableDays.sort((a, b) => (dayOrder[a] ?? 8).compareTo(dayOrder[b] ?? 8));
+
       setState(() {
         _allRoutines = routinesMap;
+        _availableDays = availableDays;
         _isLoading = false;
       });
     } catch (e) {
@@ -64,13 +78,12 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
 
   String _getCurrentDay() {
     final now = DateTime.now();
-    return DateFormat('EEEE').format(now); // Returns full day name (Monday, Tuesday, etc.)
+    return DateFormat('EEEE').format(now);
   }
 
   @override
   Widget build(BuildContext context) {
     final currentDay = _getCurrentDay();
-    final todayRoutines = _allRoutines[currentDay] ?? [];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -104,7 +117,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Today\'s Class Routine',
+                            'Weekly Class Routine',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -113,7 +126,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '$currentDay • ${todayRoutines.length} class${todayRoutines.length != 1 ? 'es' : ''}',
+                            '${_availableDays.length} day${_availableDays.length != 1 ? 's' : ''} with classes',
                             style: TextStyle(
                               color: Colors.black54,
                               fontSize: 14,
@@ -127,11 +140,11 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
               ),
             ),
 
-            // Routine List
+            // Routine List - All days vertically
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator(color: Colors.green))
-                  : todayRoutines.isEmpty
+                  : _availableDays.isEmpty
                   ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -139,25 +152,107 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
                     Icon(Icons.schedule, size: 64, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
-                      'No classes scheduled for today',
+                      'No classes scheduled',
                       style: TextStyle(color: Colors.black54),
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Enjoy your day!',
+                      'Check back later!',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               )
-                : ListView.builder(
+                  : ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: todayRoutines.length,
-                itemBuilder : (context , index) {
-                  final routine = todayRoutines[index];
-                  return _RoutineItem( routine : routine);
+                itemCount: _availableDays.length,
+                itemBuilder: (context, dayIndex) {
+                  final day = _availableDays[dayIndex];
+                  final dayRoutines = _allRoutines[day] ?? [];
+                  final isToday = day == currentDay;
+
+                  return _DaySection(
+                    day: day,
+                    routines: dayRoutines,
+                    isToday: isToday,
+                  );
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DaySection extends StatelessWidget {
+  final String day;
+  final List<Map<String, dynamic>> routines;
+  final bool isToday;
+
+  const _DaySection({
+    required this.day,
+    required this.routines,
+    required this.isToday,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Day Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isToday ? Colors.green.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isToday ? Colors.green : Colors.green,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        day,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isToday ? Colors.green : Colors.green,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (isToday) ...[
+                        SizedBox(width: 6),
+                        Icon(Icons.circle, size: 8, color: Colors.green),
+                      ],
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  '${routines.length} class${routines.length != 1 ? 'es' : ''}',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 12),
+
+            // Classes List
+            Column(
+              children: routines.map((routine) => _RoutineItem(routine: routine)).toList(),
             ),
           ],
         ),
@@ -173,135 +268,137 @@ class _RoutineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Time Section
-            Container(
-              width: 70,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          // Time Section
+          Container(
+            width: 70,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: _isClassNow(routine['startTime'], routine['endTime'])
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
                 color: _isClassNow(routine['startTime'], routine['endTime'])
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: _isClassNow(routine['startTime'], routine['endTime'])
-                      ? Colors.green
-                      : Colors.grey[300]!,
+                    ? Colors.green
+                    : Colors.grey[300]!,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  routine['startTime'],
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: _isClassNow(routine['startTime'], routine['endTime'])
+                        ? Colors.green
+                        : Colors.black,
+                  ),
                 ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    routine['startTime'],
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: _isClassNow(routine['startTime'], routine['endTime'])
-                          ? Colors.green
-                          : Colors.black,
-                    ),
+                const SizedBox(height: 2),
+                Container(
+                  width: 20,
+                  height: 1,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  routine['endTime'],
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: _isClassNow(routine['startTime'], routine['endTime'])
+                        ? Colors.green
+                        : Colors.black54,
                   ),
-                  const SizedBox(height: 2),
-                  Container(
-                    width: 20,
-                    height: 1,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    routine['endTime'],
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _isClassNow(routine['startTime'], routine['endTime'])
-                          ? Colors.green
-                          : Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
+          ),
+          const SizedBox(width: 12),
 
-            // Class Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    routine['className'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 16,
+          // Class Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  routine['className'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      size: 14,
+                      color: Colors.grey[600],
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person,
-                        size: 14,
+                    const SizedBox(width: 4),
+                    Text(
+                      routine['instructor'],
+                      style: TextStyle(
                         color: Colors.grey[600],
+                        fontSize: 12,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        routine['instructor'],
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.room,
-                        size: 14,
+                    ),
+                    const SizedBox(width: 12),
+                    Icon(
+                      Icons.room,
+                      size: 14,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      routine['room'],
+                      style: TextStyle(
                         color: Colors.grey[600],
+                        fontSize: 12,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        routine['room'],
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+          ),
 
-            // Status Badge
-            Container(
-              padding : const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration : BoxDecoration (
+          // Status Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _isClassNow(routine['startTime'], routine['endTime'])
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              _isClassNow(routine['startTime'], routine['endTime'])
+                  ? 'Now'
+                  : 'Upcoming',
+              style: TextStyle(
                 color: _isClassNow(routine['startTime'], routine['endTime'])
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.blue.withOpacity(0.1),
-                    borderRadius : BorderRadius.circular(12),
-              ),
-              child: Text(
-                _isClassNow(routine['startTime'], routine['endTime'])
-                    ? 'Now'
-                    : 'Upcoming',
-                style: TextStyle(
-                  color: _isClassNow(routine['startTime'], routine['endTime'])
-                      ? Colors.green
-                      : Colors.blue,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
+                    ? Colors.green
+                    : Colors.green,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
