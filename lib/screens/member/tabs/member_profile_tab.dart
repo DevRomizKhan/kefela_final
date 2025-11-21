@@ -69,11 +69,11 @@ class _MemberProfileTabState extends State<MemberProfileTab> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.logout, color: Colors.red),
-            const SizedBox(width: 8),
-            const Text('Confirm Logout', style: TextStyle(color: Colors.black)),
+            Icon(Icons.logout, color: Colors.green),
+            SizedBox(width: 8),
+            Text('Confirm Logout', style: TextStyle(color: Colors.black)),
           ],
         ),
         content: const Text(
@@ -100,12 +100,12 @@ class _MemberProfileTabState extends State<MemberProfileTab> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Logout failed: $e'),
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.green,
                   ),
                 );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
             child: const Text('Logout'),
           ),
         ],

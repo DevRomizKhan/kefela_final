@@ -464,7 +464,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
       ..sort((a, b) => b.value.compareTo(a.value));
 
     return Container(
-      margin: const EdgeInsets.only(top: 4),
+      margin: const EdgeInsets.only(top: 0),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -927,7 +927,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
                     GestureDetector(
                       onTap: () => _showReactionDialog(messageId, reactions),
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 2),
+                        padding: const EdgeInsets.only(top: 0),
                         child: _buildReactionSummary(reactions),
                       ),
                     ),

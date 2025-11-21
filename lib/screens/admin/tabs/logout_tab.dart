@@ -17,7 +17,7 @@ class LogoutTab extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Logout failed: ${e.toString()}'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.green,
         ),
       );
     }
@@ -29,11 +29,11 @@ class LogoutTab extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Row(
+          title: const Row(
             children: [
-              const Icon(Icons.logout, color: Colors.red),
-              const SizedBox(width: 8),
-              const Text(
+              Icon(Icons.logout, color: Colors.green),
+              SizedBox(width: 8),
+              Text(
                 'Confirm Logout',
                 style: TextStyle(color: Colors.black),
               ),
@@ -57,7 +57,7 @@ class LogoutTab extends StatelessWidget {
                 _logout(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
               ),
               child: const Text('Logout'),
