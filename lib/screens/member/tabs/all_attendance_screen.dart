@@ -15,8 +15,8 @@ class AllAttendanceScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Attendance Records"),
-        backgroundColor: Colors.green,
+        title: const Text("Attendance Records",style: TextStyle(fontWeight: FontWeight.bold),),
+        backgroundColor: Colors.white,
       ),
       body: StreamBuilder(
         stream: _firestore.collection("meetings").orderBy("date").snapshots(),
