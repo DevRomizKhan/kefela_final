@@ -21,7 +21,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
     _fetchAllRoutines();
   }
 
-  Future<void> _fetchAllRoutines() async {
+  Future <void> _fetchAllRoutines() async {
     try {
       final snapshot = await _firestore
           .collection('routines')
@@ -54,18 +54,18 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
 
       // Sort available days according to week order
       final dayOrder = {
+        'Friday': 1,
+        'Saturday': 2,
+        'Sunday': 3,
         'Monday': 4,
         'Tuesday': 5,
         'Wednesday': 6,
         'Thursday': 7,
-        'Friday': 1,
-        'Saturday': 2,
-        'Sunday': 3,
       };
 
       availableDays.sort((a, b) => (dayOrder[a] ?? 8).compareTo(dayOrder[b] ?? 8));
 
-      setState(() {
+      setState( () {
         _allRoutines = routinesMap;
         _availableDays = availableDays;
         _isLoading = false;
@@ -86,7 +86,7 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
     final currentDay = _getCurrentDay();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor : Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -126,7 +126,8 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '${_availableDays.length} day${_availableDays.length != 1 ? 's' : ''} with classes',
+                            '${_availableDays.length}'
+                                ' day${_availableDays.length != 1 ? 's' : ''} with classes',
                             style: TextStyle(
                               color: Colors.black54,
                               fontSize: 14,
@@ -162,15 +163,15 @@ class _ClassRoutineTabState extends State<ClassRoutineTab> {
                     ),
                   ],
                 ),
-              )
-                  : ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                )
+                : ListView.builder(
+                padding: const EdgeInsets.
+                symmetric(horizontal: 16, vertical: 8),
                 itemCount: _availableDays.length,
                 itemBuilder: (context, dayIndex) {
                   final day = _availableDays[dayIndex];
                   final dayRoutines = _allRoutines[day] ?? [];
                   final isToday = day == currentDay;
-
                   return _DaySection(
                     day: day,
                     routines: dayRoutines,
@@ -198,7 +199,7 @@ class _DaySection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build (BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -211,7 +212,8 @@ class _DaySection extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.
+                  symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: isToday ? Colors.green.withOpacity(0.1) : Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -252,7 +254,8 @@ class _DaySection extends StatelessWidget {
 
             // Classes List
             Column(
-              children: routines.map((routine) => _RoutineItem(routine: routine)).toList(),
+              children: routines.map((routine) =>
+                  _RoutineItem(routine: routine)).toList(),
             ),
           ],
         ),
@@ -264,7 +267,7 @@ class _DaySection extends StatelessWidget {
 class _RoutineItem extends StatelessWidget {
   final Map<String, dynamic> routine;
 
-  const _RoutineItem({required this.routine});
+  const _RoutineItem({ required this.routine });
 
   @override
   Widget build(BuildContext context) {
@@ -377,27 +380,27 @@ class _RoutineItem extends StatelessWidget {
           ),
 
           // Status Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: _isClassNow(routine['startTime'], routine['endTime'])
-                  ? Colors.green.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              _isClassNow(routine['startTime'], routine['endTime'])
-                  ? 'Now'
-                  : 'Upcoming',
-              style: TextStyle(
-                color: _isClassNow(routine['startTime'], routine['endTime'])
-                    ? Colors.green
-                    : Colors.green,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //   decoration: BoxDecoration(
+          //     color: _isClassNow(routine['startTime'], routine['endTime'])
+          //         ? Colors.green.withOpacity(0.1)
+          //         : Colors.green.withOpacity(0.1),
+          //     borderRadius : BorderRadius.circular(12),
+          //   ),
+          //   child: Text(
+          //     _isClassNow(routine['startTime'],routine['endTime'])
+          //         ? 'Now'
+          //         : 'Upcoming',
+          //     style: TextStyle(
+          //       color: _isClassNow(routine['startTime'], routine['endTime'])
+          //           ? Colors.green
+          //           : Colors.green,
+          //       fontSize: 10,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -430,6 +433,7 @@ class _RoutineItem extends StatelessWidget {
     final nowInMinutes = now.hour * 60 + now.minute;
     final startInMinutes = start.hour * 60 + start.minute;
     final endInMinutes = end.hour * 60 + end.minute;
-    return nowInMinutes >= startInMinutes && nowInMinutes <= endInMinutes;
+    return
+      nowInMinutes >= startInMinutes && nowInMinutes <= endInMinutes;
   }
 }
