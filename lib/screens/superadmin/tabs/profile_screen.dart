@@ -47,7 +47,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileSection(String userEmail, BuildContext context, bool isSmallScreen) {
+  Widget _buildProfileSection(
+      String userEmail, BuildContext context, bool isSmallScreen) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -81,19 +82,19 @@ class ProfileScreen extends StatelessWidget {
             Text(
               'Super Admin',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // Black text
-                fontSize: isSmallScreen ? 20 : 24,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Black text
+                    fontSize: isSmallScreen ? 20 : 24,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               'Account Information',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.black54, // Dark grey text
-                fontSize: isSmallScreen ? 14 : 16,
-              ),
+                    color: Colors.black54, // Dark grey text
+                    fontSize: isSmallScreen ? 14 : 16,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -273,7 +274,7 @@ class ProfileScreen extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       }
       // Show success message

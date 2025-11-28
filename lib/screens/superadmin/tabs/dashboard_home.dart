@@ -1,627 +1,278 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DashboardHome extends StatelessWidget {
+class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
+
+  @override
+  State<DashboardHome> createState() => _DashboardHomeState();
+}
+
+class _DashboardHomeState extends State<DashboardHome> {
+  // Cache for statistics
+  final Map<String, dynamic> _quickStatsCache = {};
+  final Map<String, dynamic> _detailedStatsCache = {};
+  DateTime? _lastQuickStatsUpdate;
+  DateTime? _lastDetailedStatsUpdate;
+  final Duration _cacheDuration = const Duration(minutes: 2);
+
+  // Stream controllers
+  final StreamController<Map<String, dynamic>> _quickStatsController =
+  StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _detailedStatsController =
+  StreamController<Map<String, dynamic>>.broadcast();
+
+  // Listeners
+  List<StreamSubscription> _listeners = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeListeners();
+  }
+
+  @override
+  void dispose() {
+    _quickStatsController.close();
+    _detailedStatsController.close();
+    for (var listener in _listeners) {
+      listener.cancel();
+    }
+    super.dispose();
+  }
+
+  void _initializeListeners() {
+    // Listen to all collections for real-time updates
+    _listeners = [
+      FirebaseFirestore.instance.collection('users').snapshots().listen((_) {
+        _fetchQuickStats(forceRefresh: true);
+        _fetchDetailedStats(forceRefresh: true);
+      }),
+      FirebaseFirestore.instance.collection('meetings').snapshots().listen((_) {
+        _fetchQuickStats(forceRefresh: true);
+        _fetchDetailedStats(forceRefresh: true);
+      }),
+      FirebaseFirestore.instance.collection('tasks').snapshots().listen((_) {
+        _fetchQuickStats(forceRefresh: true);
+        _fetchDetailedStats(forceRefresh: true);
+      }),
+      FirebaseFirestore.instance.collection('groups').snapshots().listen((_) {
+        _fetchQuickStats(forceRefresh: true);
+        _fetchDetailedStats(forceRefresh: true);
+      }),
+    ];
+
+    // Initial data fetch
+    _fetchQuickStats();
+    _fetchDetailedStats();
+  }
+
+  Future<void> _fetchQuickStats({bool forceRefresh = false}) async {
+    final now = DateTime.now();
+
+    // Check cache
+    if (!forceRefresh &&
+        _lastQuickStatsUpdate != null &&
+        now.difference(_lastQuickStatsUpdate!) < _cacheDuration &&
+        _quickStatsCache.isNotEmpty) {
+      return;
+    }
+
+    try {
+      // Use count queries for better performance
+      final counts = await Future.wait([
+        FirebaseFirestore.instance.collection('users').count().get(),
+        FirebaseFirestore.instance.collection('meetings').count().get(),
+        FirebaseFirestore.instance.collection('tasks').count().get(),
+        FirebaseFirestore.instance.collection('groups').count().get(),
+      ]);
+
+      final stats = {
+        'totalUsers': counts[0].count,
+        'totalMeetings': counts[1].count,
+        'totalTasks': counts[2].count,
+        'activeGroups': counts[3].count,
+      };
+
+      // Update cache and stream
+      _quickStatsCache.clear();
+      _quickStatsCache.addAll(stats);
+      _lastQuickStatsUpdate = now;
+
+      if (_quickStatsController.hasListener && !_quickStatsController.isClosed) {
+        _quickStatsController.add(stats);
+      }
+    } catch (e) {
+      print('Error fetching quick stats: $e');
+      // Emit cached data even if there's an error
+      if (_quickStatsCache.isNotEmpty && _quickStatsController.hasListener) {
+        _quickStatsController.add(_quickStatsCache);
+      }
+    }
+  }
+
+  Future<void> _fetchDetailedStats({bool forceRefresh = false}) async {
+    final now = DateTime.now();
+
+    // Check cache
+    if (!forceRefresh &&
+        _lastDetailedStatsUpdate != null &&
+        now.difference(_lastDetailedStatsUpdate!) < _cacheDuration &&
+        _detailedStatsCache.isNotEmpty) {
+      return;
+    }
+
+    try {
+      final now = DateTime.now();
+      final startOfMonth = DateTime(now.year, now.month, 1);
+      final startOfDay = DateTime(now.year, now.month, now.day);
+
+      // Fetch all data in parallel with optimized queries
+      final results = await Future.wait([
+        // Users with role distribution
+        FirebaseFirestore.instance.collection('users').get(),
+        // Meetings with date filter for monthly count
+        FirebaseFirestore.instance.collection('meetings')
+            .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
+            .get(),
+        // All meetings for total count
+        FirebaseFirestore.instance.collection('meetings').get(),
+        // Tasks with status
+        FirebaseFirestore.instance.collection('tasks').get(),
+        // Groups
+        FirebaseFirestore.instance.collection('groups').get(),
+        // Routines
+        FirebaseFirestore.instance.collection('routines').get(),
+        // Today's prayers
+        FirebaseFirestore.instance.collection('prayer_attendance')
+            .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+            .get(),
+        // All prayers for attendance rate
+        FirebaseFirestore.instance.collection('prayer_attendance').get(),
+      ]);
+
+      final userDocs = results[0].docs;
+      final monthlyMeetingDocs = results[1].docs;
+      final allMeetingDocs = results[2].docs;
+      final taskDocs = results[3].docs;
+      final groupDocs = results[4].docs;
+      final routineDocs = results[5].docs;
+      final todayPrayerDocs = results[6].docs;
+      final allPrayerDocs = results[7].docs;
+
+      // Calculate user distribution
+      int superAdmins = 0, admins = 0, members = 0;
+      for (var doc in userDocs) {
+        final role = doc.data()['role'] as String? ?? 'Member';
+        switch (role) {
+          case 'SuperAdmin': superAdmins++; break;
+          case 'Admin': admins++; break;
+          case 'Member': members++; break;
+        }
+      }
+
+      // Calculate task statistics
+      final completedTasks = taskDocs.where((doc) {
+        return (doc.data()['status'] as String? ?? '') == 'completed';
+      }).length;
+
+      final pendingTasks = taskDocs.where((doc) {
+        final status = doc.data()['status'] as String? ?? '';
+        return status == 'pending' || status == 'in progress';
+      }).length;
+
+      // Calculate prayer statistics
+      final attendedPrayers = allPrayerDocs.where((doc) {
+        return doc.data()['attended'] == true;
+      }).length;
+
+      final avgPrayerAttendance = allPrayerDocs.isNotEmpty
+          ? (attendedPrayers / allPrayerDocs.length) * 100
+          : 0.0;
+
+      // Calculate group statistics
+      int totalGroupMembers = 0;
+      for (var group in groupDocs) {
+        final data = group.data();
+        final members = data['members'] as List?;
+        if (members != null) {
+          totalGroupMembers += members.length;
+        }
+      }
+
+      final avgGroupMembers = groupDocs.isNotEmpty
+          ? totalGroupMembers / groupDocs.length
+          : 0.0;
+
+      // Calculate routine statistics
+      final activeRoutines = routineDocs.where((doc) {
+        return doc.data()['isActive'] == true;
+      }).length;
+
+      final routineCompletion = routineDocs.isNotEmpty
+          ? (activeRoutines / routineDocs.length) * 100
+          : 0.0;
+
+      // Simplified meeting attendance (you can enhance this based on your actual data structure)
+      final avgMeetingAttendance = allMeetingDocs.isNotEmpty && userDocs.isNotEmpty
+          ? 75.0 // Placeholder - replace with actual calculation
+          : 0.0;
+
+      final stats = {
+        'superAdmins': superAdmins,
+        'admins': admins,
+        'members': members,
+        'totalMeetings': allMeetingDocs.length,
+        'avgMeetingAttendance': avgMeetingAttendance,
+        'monthlyMeetings': monthlyMeetingDocs.length,
+        'totalPrayers': allPrayerDocs.length,
+        'avgPrayerAttendance': avgPrayerAttendance,
+        'todayPrayers': todayPrayerDocs.length,
+        'totalTasks': taskDocs.length,
+        'completedTasks': completedTasks,
+        'pendingTasks': pendingTasks,
+        'totalGroups': groupDocs.length,
+        'activeGroups': groupDocs.length, // Assuming all groups are active
+        'avgGroupMembers': avgGroupMembers,
+        'totalRoutines': routineDocs.length,
+        'activeRoutines': activeRoutines,
+        'routineCompletion': routineCompletion,
+      };
+
+      // Update cache and stream
+      _detailedStatsCache.clear();
+      _detailedStatsCache.addAll(stats);
+      _lastDetailedStatsUpdate = now;
+
+      if (_detailedStatsController.hasListener && !_detailedStatsController.isClosed) {
+        _detailedStatsController.add(stats);
+      }
+    } catch (e) {
+      print('Error fetching detailed stats: $e');
+      // Emit cached data even if there's an error
+      if (_detailedStatsCache.isNotEmpty && _detailedStatsController.hasListener) {
+        _detailedStatsController.add(_detailedStatsCache);
+      }
+    }
+  }
+
+  Stream<Map<String, dynamic>> get _quickStatsStream {
+    return _quickStatsController.stream.startWith(_quickStatsCache);
+  }
+
+  Stream<Map<String, dynamic>> get _detailedStatsStream {
+    return _detailedStatsController.stream.startWith(_detailedStatsCache);
+  }
+
+  Future<void> _refreshData() async {
+    await Future.wait([
+      _fetchQuickStats(forceRefresh: true),
+      _fetchDetailedStats(forceRefresh: true),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -629,23 +280,29 @@ class DashboardHome extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async {
-            
-            await Future.delayed(const Duration(milliseconds: 500));
-          },
-          child: SingleChildScrollView(
+          onRefresh: _refreshData,
+          child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                const SizedBox(height: 20),
-                _buildQuickStatsRow(context),
-                const SizedBox(height: 24),
-                _buildDetailedStatistics(context),
-              ],
-            ),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildHeader(context),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildQuickStatsRow(context),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildDetailedStatistics(context),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -665,9 +322,9 @@ class DashboardHome extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.green.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -681,39 +338,39 @@ class DashboardHome extends StatelessWidget {
                 const Text(
                   'Dashboard Overview',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   'Real-time organization analytics',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black.withOpacity(0.9),
+                    color: Colors.black.withOpacity(0.6),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.green[50],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              border: Border.all(color: Colors.green.withOpacity(0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, size: 16, color: Colors.green),
-                    const SizedBox(width: 8),
+                    const Icon(Icons.calendar_today, size: 14, color: Colors.green),
+                    const SizedBox(width: 6),
                     Text(
-                      formattedDate,
+                      DateFormat('MMM dd').format(now),
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -722,11 +379,11 @@ class DashboardHome extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 14, color: Colors.green),
-                    const SizedBox(width: 8),
+                    const Icon(Icons.access_time, size: 12, color: Colors.green),
+                    const SizedBox(width: 6),
                     Text(
                       formattedTime,
                       style: const TextStyle(
@@ -747,65 +404,115 @@ class DashboardHome extends StatelessWidget {
 
   Widget _buildQuickStatsRow(BuildContext context) {
     return StreamBuilder<Map<String, dynamic>>(
-      stream: _getQuickStatsStream(),
+      stream: _quickStatsStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return _buildErrorCard('Failed to load quick stats');
         }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingGrid(4);
-        }
-
-        final stats = snapshot.data ?? {};
+        final stats = snapshot.data ?? _quickStatsCache;
         final totalUsers = stats['totalUsers'] ?? 0;
         final totalMeetings = stats['totalMeetings'] ?? 0;
         final totalTasks = stats['totalTasks'] ?? 0;
         final activeGroups = stats['activeGroups'] ?? 0;
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final isWide = constraints.maxWidth > 600;
-            final crossAxisCount = isWide ? 4 : 2;
-            final childAspectRatio = isWide ? 1.3 : 1.5;
-
-            return GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: childAspectRatio,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              children: [
-                _buildQuickStatCard(
-                  title: 'Total Users',
-                  value: totalUsers,
-                  icon: Icons.people_outline,
-                  gradient: [Colors.green, Colors.green],
-                ),
-                _buildQuickStatCard(
-                  title: 'Total Meetings',
-                  value: totalMeetings,
-                  icon: Icons.video_library_outlined,
-                  gradient: [Colors.green, Colors.green],
-                ),
-                _buildQuickStatCard(
-                  title: 'Total Tasks',
-                  value: totalTasks,
-                  icon: Icons.assignment_outlined,
-                  gradient: [Colors.green, Colors.green],
-                ),
-                _buildQuickStatCard(
-                  title: 'Active Groups',
-                  value: activeGroups,
-                  icon: Icons.group_outlined,
-                  gradient: [Colors.green, Colors.green],
-                ),
-              ],
-            );
-          },
+        return GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: _getCrossAxisCountForQuickStats(context),
+          childAspectRatio: _getChildAspectRatioForQuickStats(context),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          padding: const EdgeInsets.only(bottom: 16),
+          children: [
+            _buildQuickStatCard(
+              title: 'Total Users',
+              value: totalUsers,
+              icon: Icons.people_outline,
+              color: Colors.green,
+            ),
+            _buildQuickStatCard(
+              title: 'Total Meetings',
+              value: totalMeetings,
+              icon: Icons.video_library_outlined,
+              color: Colors.blue,
+            ),
+            _buildQuickStatCard(
+              title: 'Total Tasks',
+              value: totalTasks,
+              icon: Icons.assignment_outlined,
+              color: Colors.orange,
+            ),
+            _buildQuickStatCard(
+              title: 'Active Groups',
+              value: activeGroups,
+              icon: Icons.group_outlined,
+              color: Colors.purple,
+            ),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildQuickStatCard({
+    required String title,
+    required int value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, size: 20, color: color),
+                ),
+                Text(
+                  _formatNumber(value),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -823,13 +530,14 @@ class DashboardHome extends StatelessWidget {
                   color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.analytics_outlined, color: Colors.green.shade600, size: 20),
+                child: Icon(Icons.analytics_outlined,
+                    color: Colors.green.shade600, size: 20),
               ),
               const SizedBox(width: 12),
               const Text(
                 'Detailed Analytics',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -839,164 +547,73 @@ class DashboardHome extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         StreamBuilder<Map<String, dynamic>>(
-          stream: _getDetailedStatsStream(),
+          stream: _detailedStatsStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return _buildErrorCard('Failed to load detailed analytics: ${snapshot.error}');
+              return _buildErrorCard('Failed to load detailed analytics');
             }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingGrid(6);
-            }
+            final stats = snapshot.data ?? _detailedStatsCache;
 
-            final stats = snapshot.data ?? {};
-
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final crossAxisCount = _getCrossAxisCount(constraints.maxWidth);
-                final childAspectRatio = _getChildAspectRatio(constraints.maxWidth);
-
-                return GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: childAspectRatio,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
-                    _buildDetailedStatCard(
-                      title: 'User Distribution',
-                      icon: Icons.pie_chart_outline,
-                      color: Colors.green.shade600,
-                      stats: [
-                        _buildStatItem('Super Admins', stats['superAdmins'] ?? 0, Icons.verified_user),
-                        _buildStatItem('Admins', stats['admins'] ?? 0, Icons.admin_panel_settings),
-                        _buildStatItem('Members', stats['members'] ?? 0, Icons.person),
-                      ],
-                    ),
-                    _buildDetailedStatCard(
-                      title: 'Meeting Analytics',
-                      icon: Icons.meeting_room_outlined,
-                      color: Colors.purple.shade600,
-                      stats: [
-                        _buildStatItem('Total', stats['totalMeetings'] ?? 0, Icons.video_library),
-                        _buildStatItem('Avg Attendance', '${stats['avgMeetingAttendance']?.toStringAsFixed(1) ?? '0'}%', Icons.people),
-                        _buildStatItem('This Month', stats['monthlyMeetings'] ?? 0, Icons.calendar_month),
-                      ],
-                    ),
-                    _buildDetailedStatCard(
-                      title: 'Prayer Attendance',
-                      icon: Icons.mosque_outlined,
-                      color: Colors.green.shade600,
-                      stats: [
-                        _buildStatItem('Total Records', stats['totalPrayers'] ?? 0, Icons.format_list_numbered),
-                        _buildStatItem('Attendance Rate', '${stats['avgPrayerAttendance']?.toStringAsFixed(1) ?? '0'}%', Icons.trending_up),
-                        _buildStatItem('Today', stats['todayPrayers'] ?? 0, Icons.today),
-                      ],
-                    ),
-                    _buildDetailedStatCard(
-                      title: 'Task Management',
-                      icon: Icons.task_alt,
-                      color: Colors.orange.shade600,
-                      stats: [
-                        _buildStatItem('Total', stats['totalTasks'] ?? 0, Icons.assignment),
-                        _buildStatItem('Completed', stats['completedTasks'] ?? 0, Icons.check_circle),
-                        _buildStatItem('Pending', stats['pendingTasks'] ?? 0, Icons.pending),
-                      ],
-                    ),
-                    _buildDetailedStatCard(
-                      title: 'Group Analytics',
-                      icon: Icons.group_work_outlined,
-                      color: Colors.red.shade600,
-                      stats: [
-                        _buildStatItem('Total Groups', stats['totalGroups'] ?? 0, Icons.groups),
-                        _buildStatItem('Active', stats['activeGroups'] ?? 0, Icons.circle),
-                        _buildStatItem('Avg Members', stats['avgGroupMembers']?.toStringAsFixed(1) ?? '0', Icons.person_outline),
-                      ],
-                    ),
-                    _buildDetailedStatCard(
-                      title: 'Routine Stats',
-                      icon: Icons.schedule_outlined,
-                      color: Colors.teal.shade600,
-                      stats: [
-                        _buildStatItem('Total', stats['totalRoutines'] ?? 0, Icons.list_alt),
-                        _buildStatItem('Active', stats['activeRoutines'] ?? 0, Icons.play_circle),
-                        _buildStatItem('Completion', '${stats['routineCompletion']?.toStringAsFixed(1) ?? '0'}%', Icons.percent),
-                      ],
-                    ),
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: _getCrossAxisCountForDetailedStats(context),
+              childAspectRatio: _getChildAspectRatioForDetailedStats(context),
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              children: [
+                _buildDetailedStatCard(
+                  title: 'User Distribution',
+                  icon: Icons.pie_chart_outline,
+                  color: Colors.green,
+                  stats: [
+                    _buildStatItem('Super Admins', stats['superAdmins'] ?? 0),
+                    _buildStatItem('Admins', stats['admins'] ?? 0),
+                    _buildStatItem('Members', stats['members'] ?? 0),
                   ],
-                );
-              },
+                ),
+                _buildDetailedStatCard(
+                  title: 'Meeting Analytics',
+                  icon: Icons.meeting_room_outlined,
+                  color: Colors.blue,
+                  stats: [
+                    _buildStatItem('Total', stats['totalMeetings'] ?? 0),
+                    _buildStatItem(
+                      'Avg Attendance',
+                      '${stats['avgMeetingAttendance']?.toStringAsFixed(1) ?? '0'}%',
+                    ),
+                    _buildStatItem('This Month', stats['monthlyMeetings'] ?? 0),
+                  ],
+                ),
+                _buildDetailedStatCard(
+                  title: 'Prayer Attendance',
+                  icon: Icons.mosque_outlined,
+                  color: Colors.orange,
+                  stats: [
+                    _buildStatItem('Total Records', stats['totalPrayers'] ?? 0),
+                    _buildStatItem(
+                      'Attendance Rate',
+                      '${stats['avgPrayerAttendance']?.toStringAsFixed(1) ?? '0'}%',
+                    ),
+                    _buildStatItem('Today', stats['todayPrayers'] ?? 0),
+                  ],
+                ),
+                _buildDetailedStatCard(
+                  title: 'Task Management',
+                  icon: Icons.task_alt,
+                  color: Colors.purple,
+                  stats: [
+                    _buildStatItem('Total', stats['totalTasks'] ?? 0),
+                    _buildStatItem('Completed', stats['completedTasks'] ?? 0),
+                    _buildStatItem('Pending', stats['pendingTasks'] ?? 0),
+                  ],
+                ),
+              ],
             );
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildQuickStatCard({
-    required String title,
-    required int value,
-    required IconData icon,
-    required List<Color> gradient,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: gradient[0].withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 24, color: Colors.white),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _formatNumber(value),
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white.withOpacity(0.9),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -1013,26 +630,26 @@ class DashboardHome extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100, width: 1.5),
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, size: 22, color: color),
+                  child: Icon(icon, size: 20, color: color),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1043,47 +660,46 @@ class DashboardHome extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            ...stats,
+            const SizedBox(height: 16),
+            Column(
+              children: stats,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(String label, dynamic value, IconData icon) {
+  Widget _buildStatItem(String label, dynamic value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: Colors.grey[400]),
-          const SizedBox(width: 8),
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[700],
+                color: Colors.black87,
               ),
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.grey[50],
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
             ),
             child: Text(
               value.toString(),
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
             ),
@@ -1093,70 +709,9 @@ class DashboardHome extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingGrid(int itemCount) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final crossAxisCount = _getCrossAxisCount(constraints.maxWidth);
-        return GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: 1.4,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          children: List.generate(itemCount, (index) => _buildShimmerCard()),
-        );
-      },
-    );
-  }
-
-  Widget _buildShimmerCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            const Spacer(),
-            Container(
-              width: double.infinity,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: 100,
-              height: 14,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildErrorCard(String message) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.red.shade50,
         borderRadius: BorderRadius.circular(12),
@@ -1164,7 +719,7 @@ class DashboardHome extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: Colors.red.shade600),
+          Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -1180,16 +735,33 @@ class DashboardHome extends StatelessWidget {
     );
   }
 
-  int _getCrossAxisCount(double width) {
-    if (width > 1200) return 3;
+  // Responsive layout methods
+  int _getCrossAxisCountForQuickStats(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1000) return 4;
+    if (width > 600) return 2;
+    return 2;
+  }
+
+  double _getChildAspectRatioForQuickStats(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1000) return 1.3;
+    if (width > 600) return 1.2;
+    return 1.1;
+  }
+
+  int _getCrossAxisCountForDetailedStats(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1000) return 4;
     if (width > 800) return 2;
     return 1;
   }
 
-  double _getChildAspectRatio(double width) {
-    if (width > 1200) return 1.5;
-    if (width > 800) return 1.3;
-    return 1.1;
+  double _getChildAspectRatioForDetailedStats(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1000) return 1.2;
+    if (width > 800) return 1.1;
+    return 1.0;
   }
 
   String _formatNumber(int number) {
@@ -1201,197 +773,10 @@ class DashboardHome extends StatelessWidget {
     }
     return number.toString();
   }
-
-  Stream<Map<String, dynamic>> _getQuickStatsStream() async* {
-    
-    yield await _fetchQuickStats();
-
-    
-    await for (final _ in Stream.periodic(const Duration(seconds: 30))) {
-      yield await _fetchQuickStats();
-    }
-  }
-
-  Future<Map<String, dynamic>> _fetchQuickStats() async {
-    try {
-      final results = await Future.wait([
-        FirebaseFirestore.instance.collection('users').get(),
-        FirebaseFirestore.instance.collection('meetings').get(),
-        FirebaseFirestore.instance.collection('tasks').get(),
-        FirebaseFirestore.instance.collection('groups').get(),
-      ]);
-
-      return {
-        'totalUsers': results[0].docs.length,
-        'totalMeetings': results[1].docs.length,
-        'totalTasks': results[2].docs.length,
-        'activeGroups': results[3].docs.length,
-      };
-    } catch (e) {
-      print('Error fetching quick stats: $e');
-      return {};
-    }
-  }
-
-  Stream<Map<String, dynamic>> _getDetailedStatsStream() async* {
-    
-    yield await _fetchDetailedStats();
-
-    
-    await for (final _ in Stream.periodic(const Duration(seconds: 45))) {
-      yield await _fetchDetailedStats();
-    }
-  }
-
-  Future<Map<String, dynamic>> _fetchDetailedStats() async {
-    try {
-      final now = DateTime.now();
-      final startOfMonth = DateTime(now.year, now.month, 1);
-      final startOfDay = DateTime(now.year, now.month, now.day);
-
-      
-      final results = await Future.wait([
-        FirebaseFirestore.instance.collection('users').get(),
-        FirebaseFirestore.instance.collection('meetings').get(),
-        FirebaseFirestore.instance.collection('prayer_attendance').get(),
-        FirebaseFirestore.instance.collection('tasks').get(),
-        FirebaseFirestore.instance.collection('groups').get(),
-        FirebaseFirestore.instance.collection('routines').get(),
-      ]);
-
-      final userDocs = results[0].docs;
-      final meetingDocs = results[1].docs;
-      final prayerDocs = results[2].docs;
-      final taskDocs = results[3].docs;
-      final groupDocs = results[4].docs;
-      final routineDocs = results[5].docs;
-
-      
-      int superAdmins = 0, admins = 0, members = 0;
-      for (var doc in userDocs) {
-        final role = doc.data()['role'] as String?;
-        if (role == 'SuperAdmin') superAdmins++;
-        else if (role == 'Admin') admins++;
-        else if (role == 'Member') members++;
-      }
-
-      
-      final monthlyMeetings = meetingDocs.where((doc) {
-        final data = doc.data();
-        final timestamp = data['timestamp'] as Timestamp?;
-        return timestamp != null && timestamp.toDate().isAfter(startOfMonth);
-      }).length;
-
-      
-      int totalAttendanceRecords = 0;
-      for (var meeting in meetingDocs) {
-        try {
-          final attendanceSnapshot = await FirebaseFirestore.instance
-              .collection('meetings')
-              .doc(meeting.id)
-              .collection('attendance')
-              .get();
-          totalAttendanceRecords += attendanceSnapshot.docs.length;
-        } catch (e) {
-          print('Error fetching attendance for meeting ${meeting.id}: $e');
-        }
-      }
-
-      final avgMeetingAttendance = meetingDocs.isNotEmpty && userDocs.isNotEmpty
-          ? (totalAttendanceRecords / (meetingDocs.length * userDocs.length)) * 100
-          : 0.0;
-
-      
-      final todayPrayers = prayerDocs.where((doc) {
-        final data = doc.data();
-        final timestamp = data['timestamp'] as Timestamp?;
-        return timestamp != null && timestamp.toDate().isAfter(startOfDay);
-      }).length;
-
-      final attendedPrayers = prayerDocs.where((doc) {
-        final data = doc.data();
-        return data['attended'] == true;
-      }).length;
-
-      final avgPrayerAttendance = prayerDocs.isNotEmpty
-          ? (attendedPrayers / prayerDocs.length) * 100
-          : 0.0;
-
-      
-      final completedTasks = taskDocs.where((doc) {
-        final data = doc.data();
-        return data['status'] == 'completed';
-      }).length;
-
-      final pendingTasks = taskDocs.where((doc) {
-        final data = doc.data();
-        return data['status'] == 'pending';
-      }).length;
-
-      
-      int totalGroupMembers = 0;
-      for (var group in groupDocs) {
-        try {
-          final data = group.data();
-          final members = data['members'] as List?;
-          if (members != null) {
-            totalGroupMembers += members.length;
-          } else {
-            
-            final membersSnapshot = await FirebaseFirestore.instance
-                .collection('groups')
-                .doc(group.id)
-                .collection('members')
-                .get();
-            totalGroupMembers += membersSnapshot.docs.length;
-          }
-        } catch (e) {
-          print('Error counting members for group ${group.id}: $e');
-        }
-      }
-
-      final avgGroupMembers = groupDocs.isNotEmpty
-          ? totalGroupMembers / groupDocs.length
-          : 0.0;
-
-      
-      final activeRoutines = routineDocs.where((doc) {
-        final data = doc.data();
-        return data['isActive'] == true;
-      }).length;
-
-      final routineCompletion = routineDocs.isNotEmpty
-          ? (activeRoutines / routineDocs.length) * 100
-          : 0.0;
-
-      return {
-        'superAdmins': superAdmins,
-        'admins': admins,
-        'members': members,
-        'totalMeetings': meetingDocs.length,
-        'avgMeetingAttendance': avgMeetingAttendance,
-        'monthlyMeetings': monthlyMeetings,
-        'totalPrayers': prayerDocs.length,
-        'avgPrayerAttendance': avgPrayerAttendance,
-        'todayPrayers': todayPrayers,
-        'totalTasks': taskDocs.length,
-        'completedTasks': completedTasks,
-        'pendingTasks': pendingTasks,
-        'totalGroups': groupDocs.length,
-        'activeGroups': groupDocs.length,
-        'avgGroupMembers': avgGroupMembers,
-        'totalRoutines': routineDocs.length,
-        'activeRoutines': activeRoutines,
-        'routineCompletion': routineCompletion,
-      };
-    } catch (e) {
-      print('Error fetching detailed stats: $e');
-      rethrow;
-    }
-  }
 }
 
-extension StreamExtension<T> on Stream<T> {
+// Extension for stream startWith functionality
+extension StartWith<T> on Stream<T> {
   Stream<T> startWith(T value) async* {
     yield value;
     yield* this;

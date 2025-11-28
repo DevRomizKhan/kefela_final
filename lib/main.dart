@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kafela/services/database_service.dart';
@@ -30,26 +29,23 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Kafela',
         debugShowCheckedModeBanner: false,
-        // theme: ThemeData(
-        //   primarySwatch: Colors.blue,
-        //   useMaterial3: true,
-        // ),
         theme: ThemeData(
-
-          scaffoldBackgroundColor: Colors.white,     // whole app background white
-          primaryColor: Colors.green,                // primary green
-          fontFamily: 'Libertinus',                  // global font
+          scaffoldBackgroundColor: Colors.white, // whole app background white
+          primaryColor: Colors.green, // primary green
+          fontFamily: 'Libertinus', // global font
 
           textTheme: const TextTheme(
             bodyMedium: TextStyle(
-              color: Colors.black,                   // text black
+              color: Colors.black, // text black
             ),
           ),
 
           elevatedButtonTheme: const ElevatedButtonThemeData(
-            style:  ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.green), // global button green
-              foregroundColor: WidgetStatePropertyAll(Colors.white), // button text white
+            style: ButtonStyle(
+              backgroundColor:
+                  WidgetStatePropertyAll(Colors.green), // global button green
+              foregroundColor:
+                  WidgetStatePropertyAll(Colors.white), // button text white
             ),
           ),
         ),
@@ -58,5 +54,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

@@ -123,7 +123,7 @@ class _MemberProfileTabState extends State<MemberProfileTab> {
         ),
       );
     }
-    final userName = _memberData?['displayName']?.toString() ?? 'Member';
+    final userName = _memberData?['name']?.toString() ?? 'Member';
     final userEmail = _memberData?['email']?.toString() ?? 'No email';
     final createdAt = _memberData?['createdAt'];
     return Scaffold(
@@ -241,7 +241,7 @@ class _MemberProfileTabState extends State<MemberProfileTab> {
                       ),
                       const SizedBox(height: 16),
                       _buildSettingOption(
-                        'Edit Profile',
+                        'Change Password',
                         Icons.edit,
                         Colors.green,
                             () {

@@ -295,6 +295,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
           'fileUrl': null,
           'fileName': null,
           'fileType': null,
+          'reactions': {}, // Clear all reactions when message is deleted
         });
       } catch (e) {
         print('Error deleting message: $e');
@@ -315,6 +316,15 @@ class _GroupChatPageState extends State<GroupChatPage> {
         final messageDoc = await transaction.get(messageRef);
 
         if (!messageDoc.exists) return;
+
+        // Check if message is deleted
+        final isDeleted = messageDoc['isDeleted'] == true;
+        if (isDeleted) {
+          if (mounted) {
+            _showSnackBar('Cannot react to deleted message', isError: true);
+          }
+          return;
+        }
 
         final currentReactions = Map<String, dynamic>.from(
             messageDoc['reactions'] as Map<String, dynamic>? ?? {});
@@ -787,7 +797,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
       onLongPress: () {
         if (isCurrentUser && !isDeleted) {
           _showMessageOptions(messageId, reactions);
-        } else {
+        } else if (!isDeleted) {
           _showReactionDialog(messageId, reactions);
         }
       },
@@ -922,8 +932,8 @@ class _GroupChatPageState extends State<GroupChatPage> {
                     ),
                   ),
 
-                  // Reactions
-                  if (reactions.isNotEmpty)
+                  // Reactions (only show if message is not deleted and has reactions)
+                  if (reactions.isNotEmpty && !isDeleted)
                     GestureDetector(
                       onTap: () => _showReactionDialog(messageId, reactions),
                       child: Padding(

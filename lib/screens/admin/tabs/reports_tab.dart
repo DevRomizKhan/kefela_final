@@ -751,11 +751,11 @@ class _ReportsTabState extends State<ReportsTab> {
               '${report['taskStats']['completedTasks']} of ${report['taskStats']['totalTasks']} tasks',
             ),
             _buildPerformanceCard(
-              'Avg. Task Time',
-              '${report['taskStats']['avgCompletionTime'].toStringAsFixed(1)}h',
-              Icons.timer,
-              Colors.blue,
-              'Average completion time',
+              'Comming Soon',
+              '',
+              Icons.watch_later,
+              Colors.green,
+              '',
             ),
           ],
         ),
@@ -1228,3 +1228,4 @@ class _ReportsTabState extends State<ReportsTab> {
     }
   }
 }
+

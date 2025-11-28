@@ -151,23 +151,70 @@ class _TasksTabState extends State<TasksTab> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
+
+                                // Due date
                                 Text(
                                   'Due: ${DateFormat('MMM dd, yyyy').format(dueDate)}',
                                   style: TextStyle(
-                                    color:
-                                        isOverdue ? Colors.red : Colors.black54,
-                                    fontWeight: isOverdue
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                                    color: isOverdue ? Colors.red : Colors.black54,
+                                    fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
                                   ),
                                 ),
+
+                                // Assigned member
                                 Text(
                                   'Assigned to: ${task['assignedToName'] ?? 'Unknown'}',
-                                  style: const TextStyle(
-                                      color: Colors.black54, fontSize: 12),
+                                  style: const TextStyle(color: Colors.black54, fontSize: 12),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                // FEEDBACK SECTION
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: task['feedback'] != null
+                                        ? Colors.green.withOpacity(0.1)
+                                        : Colors.orange.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Member Feedback:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: task['feedback'] != null ? Colors.green : Colors.orange,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+
+                                      // If feedback exists
+                                      if (task['feedback'] != null) ...[
+                                        Text(
+                                          task['feedback'],
+                                          style: const TextStyle(color: Colors.black87),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Submitted on: ${task['feedbackAt'] != null ? DateFormat('MMM dd, yyyy  hh:mm a').format((task['feedbackAt'] as Timestamp).toDate()) : "Unknown"}',
+                                          style: const TextStyle(color: Colors.black54, fontSize: 11),
+                                        ),
+                                      ],
+
+                                      // If feedback does NOT exist
+                                      if (task['feedback'] == null)
+                                        const Text(
+                                          'No feedback submitted yet',
+                                          style: TextStyle(color: Colors.black54),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
+
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:kafela/screens/superadmin/tabs/meeting_management_screen.dart';
 import 'package:kafela/screens/superadmin/tabs/profile_screen.dart';
@@ -20,7 +19,10 @@ class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
     const DashboardHome(),
     const MeetingManagementScreen(),
     const UserManagementScreen(),
-    const ReportsTab(selectedMemberId: '',selectedMemberName: '',),
+    const ReportsTab(
+      selectedMemberId: '',
+      selectedMemberName: '',
+    ),
     const ProfileScreen(),
   ];
 
@@ -78,4 +80,3 @@ class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
     );
   }
 }
-
