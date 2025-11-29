@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// Import all the tab screens
+import 'package:kafela/screens/admin/tabs/donation_admin.dart';
 import 'tabs/dashboard_tab.dart';
 import 'tabs/attendance_tab.dart';
 import 'tabs/reports_tab.dart';
@@ -28,6 +27,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     const ReportsTab(selectedMemberId: '', selectedMemberName: ''),
     const RoutineTab(),
     const TasksTab(),
+    const DonationTab(),
     const GroupsTab(),
     const LogoutTab(),
   ];
@@ -53,6 +53,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
     const BottomNavigationBarItem(
       icon: Icon(Icons.assignment),
       label: 'Tasks',
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.assignment),
+      label: 'Donation',
     ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.group),
@@ -97,7 +101,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(
                 _navItems.length,
-                    (index) => _buildNavItem(
+                (index) => _buildNavItem(
                   iconData: (_navItems[index].icon as Icon).icon!,
                   label: _navItems[index].label!,
                   isSelected: _currentIndex == index,

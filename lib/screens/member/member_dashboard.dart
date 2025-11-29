@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kafela/screens/member/tabs/donation_tab.dart';
 // Import member tabs
 import 'tabs/member_dashboard_tab.dart';
 import 'tabs/activity_tab.dart';
@@ -50,6 +51,7 @@ class _MemberDashboardState extends State<MemberDashboard> {
     // const MemberTasksTab(),
     // const MemberGroupsTab(),
     const MemberActivityTab(),
+    const MemberDonationPanel(),
     const MemberProfileTab(),
   ];
 
@@ -70,14 +72,15 @@ class _MemberDashboardState extends State<MemberDashboard> {
     //   icon: Icon(Icons.assignment),
     //   label: 'Tasks',
     // ),
-    // const BottomNavigationBarItem(
-    //   icon: Icon(Icons.group),
-    //   label: 'Groups',
-    // ),
+
     const BottomNavigationBarItem(
       icon: Icon(Icons.analytics),
       label: 'Activity',
-    ),
+  ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.group),
+        label: 'Donation',
+      ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.person),
       label: 'Profile',
