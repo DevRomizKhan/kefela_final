@@ -189,7 +189,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                       margin: const EdgeInsets.only(bottom: 8),
                       elevation: 2,
                       child: ListTile(
-                        leading: const Icon(Icons.assignment, color: Colors.blue),
+                        leading: const Icon(Icons.assignment, color: Colors.black),
                         title: Text(
                           donation['memberName'] ?? 'Unknown Member',
                           style: const TextStyle(
@@ -214,13 +214,13 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                               decoration: BoxDecoration(
                                 color: donation['status'] == 'active'
                                     ? Colors.green.withOpacity(0.1)
-                                    : Colors.orange.withOpacity(0.1),
+                                    : Colors.black.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 donation['status'] ?? 'active',
                                 style: TextStyle(
-                                  color: donation['status'] == 'active' ? Colors.green : Colors.orange,
+                                  color: donation['status'] == 'active' ? Colors.green : Colors.black,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -232,7 +232,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+                              icon: const Icon(Icons.edit, color: Colors.black, size: 20),
                               onPressed: () => _editMonthlyDonation(donation, donationId),
                             ),
                             IconButton(
@@ -452,113 +452,134 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Member Selection
-            DropdownButtonFormField<String>(
-              value: _selectedMember.isEmpty && widget.members.isNotEmpty
-                  ? widget.members.first['uid']
-                  : _selectedMember,
-              decoration: const InputDecoration(
-                labelText: 'Select Member *',
-                labelStyle: TextStyle(color: Colors.black54),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green),
-                ),
-              ),
-              items: widget.members.map<DropdownMenuItem<String>>((member) {
-                return DropdownMenuItem<String>(
-                  value: member['uid'] as String,
-                  child: Text(
-                    '${member['name']} (${member['email']})',
-                    style: const TextStyle(color: Colors.black),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Member Selection
+                DropdownButtonFormField<String>(
+                  isExpanded: true, // Important for responsiveness
+                  value: _selectedMember.isEmpty && widget.members.isNotEmpty
+                      ? widget.members.first['uid']
+                      : _selectedMember,
+                  decoration: const InputDecoration(
+                    labelText: 'Select Member *',
+                    labelStyle: TextStyle(color: Colors.black54),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                   ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedMember = value!;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-
-            // Monthly Amount
-            TextField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Monthly Amount (BDT) *',
-                labelStyle: TextStyle(color: Colors.black54),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green),
+                  items: widget.members.map<DropdownMenuItem<String>>((member) {
+                    return DropdownMenuItem<String>(
+                      value: member['uid'] as String,
+                      child: Text(
+                        '${member['name']} (${member['email']})',
+                        style: const TextStyle(color: Colors.black),
+                        overflow: TextOverflow.ellipsis, // Prevent text overflow
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedMember = value!;
+                    });
+                  },
                 ),
-              ),
-              style: const TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-            // Info Card
-            Card(
-              color: Colors.blue.withOpacity(0.1),
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.info, color: Colors.blue, size: 24),
-                    SizedBox(height: 8),
-                    Text(
-                      'Monthly Donation Information',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                // Monthly Amount
+                TextFormField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Monthly Amount (BDT) *',
+                    labelStyle: TextStyle(color: Colors.black54),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const SizedBox(height: 20),
+
+                // Info Card
+                Card(
+                  // color: Colors.black.withOpacity(0.1),
+                  color: Colors.white,
+                  child: const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.black, size: 24),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Monthly Donation Information',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          '• This amount will be assigned as monthly donation for the selected member\n• Member can pay this amount month-wise from their panel\n• Member can pay the exact amount or any amount they wish\n• Payments require admin verification',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14, // Slightly larger for better readability
+                            height: 1.4, // Better line spacing
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Save Button
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: double.infinity,
+                    minHeight: 50,
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _assignMonthlyDonation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      disabledBackgroundColor: Colors.grey,
+                      textStyle: const TextStyle(
                         fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      '• This amount will be assigned as monthly donation for the selected member\n• Member can pay this amount month-wise from their panel\n• Member can pay the exact amount or any amount they wish\n• Payments require admin verification',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 12,
+                    child: _isLoading
+                        ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _assignMonthlyDonation,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  disabledBackgroundColor: Colors.grey,
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
+                    )
+                        : const Text('Assign Monthly Donation'),
                   ),
-                )
-                    : const Text(
-                  'Assign Monthly Donation',
-                  style: TextStyle(fontSize: 16),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -884,7 +905,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Payment ${status} successfully!'),
-                      backgroundColor: status == 'verified' ? Colors.green : Colors.orange,
+                      backgroundColor: status == 'verified' ? Colors.green : Colors.black,
                     ),
                   );
                 }
@@ -901,7 +922,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: status == 'verified' ? Colors.green : Colors.orange,
+              backgroundColor: status == 'verified' ? Colors.green : Colors.black,
               foregroundColor: Colors.white,
             ),
             child: Text('${status.toUpperCase()} PAYMENT'),
@@ -945,7 +966,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
       case 'rejected':
         return Colors.red;
       default:
-        return Colors.orange;
+        return Colors.black;
     }
   }
 
@@ -1198,7 +1219,7 @@ class FundRaiseCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           Icons.volunteer_activism,
-          color: isActive ? Colors.green : Colors.orange,
+          color: isActive ? Colors.green : Colors.black,
         ),
         title: Text(
           fundRaise['fundName'] ?? 'Unknown Fund',
@@ -1231,13 +1252,13 @@ class FundRaiseCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isActive
                         ? Colors.green.withOpacity(0.1)
-                        : Colors.orange.withOpacity(0.1),
+                        : Colors.black.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     isActive ? 'Active' : 'Completed',
                     style: TextStyle(
-                      color: isActive ? Colors.green : Colors.orange,
+                      color: isActive ? Colors.green : Colors.black,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1250,7 +1271,7 @@ class FundRaiseCard extends StatelessWidget {
                     style: TextStyle(
                       color: (totalCollected / targetAmount) >= 1
                           ? Colors.green
-                          : Colors.orange,
+                          : Colors.black,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1263,7 +1284,7 @@ class FundRaiseCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+              icon: const Icon(Icons.edit, color: Colors.black, size: 20),
               onPressed: onEdit,
             ),
             IconButton(
@@ -1496,19 +1517,19 @@ class _CreateFundRaisePageState extends State<CreateFundRaisePage> {
             const SizedBox(height: 20),
 
             // Info Card
-            Card(
-              color: Colors.orange.withOpacity(0.1),
-              child: const Padding(
+            const Card(
+              color: Colors.white,
+              child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info, color: Colors.orange, size: 24),
+                    Icon(Icons.info, color: Colors.black, size: 24),
                     SizedBox(height: 8),
                     Text(
                       'Fund Raise Information',
                       style: TextStyle(
-                        color: Colors.orange,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -1517,7 +1538,7 @@ class _CreateFundRaisePageState extends State<CreateFundRaisePage> {
                     Text(
                       '• This fund raise will be visible to all members\n• Members can donate any amount until the end date\n• Provide the account number where members should send payments\n• Target amount is optional - leave empty for open-ended fund raise\n• Progress will be tracked automatically',
                       style: TextStyle(
-                        color: Colors.orange,
+                        color: Colors.black,
                         fontSize: 12,
                       ),
                     ),
@@ -1909,7 +1930,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Donation ${status} successfully!'),
-                      backgroundColor: status == 'verified' ? Colors.green : Colors.orange,
+                      backgroundColor: status == 'verified' ? Colors.green : Colors.black,
                     ),
                   );
                 }
@@ -1926,7 +1947,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: status == 'verified' ? Colors.green : Colors.orange,
+              backgroundColor: status == 'verified' ? Colors.green : Colors.black,
               foregroundColor: Colors.white,
             ),
             child: Text('${status.toUpperCase()} DONATION'),
@@ -1970,7 +1991,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
       case 'rejected':
         return Colors.red;
       default:
-        return Colors.orange;
+        return Colors.black;
     }
   }
 
@@ -2360,7 +2381,7 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
           children: [
             // Member Info (Read-only)
             Card(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -2430,18 +2451,18 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
 
             // Status Info
             Card(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.white,
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info, color: Colors.blue, size: 24),
+                    Icon(Icons.info, color: Colors.black, size: 24),
                     SizedBox(height: 8),
                     Text(
                       'Status Information',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -2450,7 +2471,7 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
                     Text(
                       '• ACTIVE: Member can make payments normally\n• PAUSED: Temporarily pause monthly donations\n• CANCELLED: Stop monthly donations permanently',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.black,
                         fontSize: 12,
                       ),
                     ),
