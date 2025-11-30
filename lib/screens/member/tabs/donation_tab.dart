@@ -1007,7 +1007,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
         children: [
           // Header Info
           Card(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.white,
             child: const Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
@@ -1711,7 +1711,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
                 child: ElevatedButton(
                   onPressed: () => _navigateToDonate(fundRaise),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
@@ -1945,7 +1945,7 @@ class _DonateToFundRaisePageState extends State<DonateToFundRaisePage> {
 
             // Fund Info
             Card(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -2055,7 +2055,7 @@ class _DonateToFundRaisePageState extends State<DonateToFundRaisePage> {
 
             // Verification Info
             Card(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.white,
               child: const Padding(
                 padding: EdgeInsets.all(12.0),
                 child: Row(
@@ -2097,7 +2097,7 @@ class _DonateToFundRaisePageState extends State<DonateToFundRaisePage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _submitFundDonation,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     disabledBackgroundColor: Colors.grey,
