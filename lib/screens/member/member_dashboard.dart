@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kafela/screens/member/tabs/donation_tab.dart';
 // Import member tabs
 import 'tabs/member_dashboard_tab.dart';
-import 'tabs/activity_tab.dart';
+import 'tabs/activity/activity_tab.dart';
 import 'tabs/member_profile_tab.dart';
 
 class MemberDashboard extends StatefulWidget {

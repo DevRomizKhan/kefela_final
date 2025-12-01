@@ -71,6 +71,7 @@ dependencies:
 
   # Internationalization
   intl: ^0.18.1
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:

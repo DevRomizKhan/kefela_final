@@ -23,11 +23,13 @@ class _MemberDonationPanelState extends State<MemberDonationPanel> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: const Text(
-            'My Donations',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+          title: Center(
+            child: const Text(
+              'My Donations',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           bottom: const TabBar(
@@ -209,7 +211,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -468,7 +470,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
       case 'rejected':
         return '❌ Rejected - Not Valid';
       default:
-        return '⏳ Pending - Awaiting Verification';
+        return '🕓 Pending - Awaiting Verification';
     }
   }
 
@@ -648,7 +650,7 @@ class _PayMonthlyDonationPageState extends State<PayMonthlyDonationPage> {
           children: [
             // Monthly Amount Info
             Card(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -684,7 +686,7 @@ class _PayMonthlyDonationPageState extends State<PayMonthlyDonationPage> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -858,9 +860,9 @@ class _PayMonthlyDonationPageState extends State<PayMonthlyDonationPage> {
             const SizedBox(height: 20),
 
             // Verification Info
-            Card(
-              color: Colors.black.withOpacity(0.1),
-              child: const Padding(
+            const Card(
+              color: Colors.white,
+              child: Padding(
                 padding: EdgeInsets.all(12.0),
                 child: Row(
                   children: [
@@ -1006,9 +1008,9 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
       child: Column(
         children: [
           // Header Info
-          Card(
-            color: Colors.black.withOpacity(0.1),
-            child: const Padding(
+          const Card(
+            color: Colors.white,
+            child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
                 children: [
@@ -1711,7 +1713,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
                 child: ElevatedButton(
                   onPressed: () => _navigateToDonate(fundRaise),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
@@ -1738,14 +1740,14 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
                   color: Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.info, color: Colors.grey, size: 16),
-                    const SizedBox(width: 8),
+                    Icon(Icons.info, color: Colors.grey, size: 16),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'This fund raise has ended. Thank you for your support!',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                         ),
@@ -1778,7 +1780,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
       case 'rejected':
         return '❌ Rejected - Not Valid';
       default:
-        return '⏳ Pending - Awaiting Verification';
+        return '🕓 Pending - Awaiting Verification';
     }
   }
 }
@@ -1945,7 +1947,7 @@ class _DonateToFundRaisePageState extends State<DonateToFundRaisePage> {
 
             // Fund Info
             Card(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -2054,9 +2056,9 @@ class _DonateToFundRaisePageState extends State<DonateToFundRaisePage> {
             const SizedBox(height: 20),
 
             // Verification Info
-            Card(
-              color: Colors.black.withOpacity(0.1),
-              child: const Padding(
+            const Card(
+              color: Colors.white,
+              child: Padding(
                 padding: EdgeInsets.all(12.0),
                 child: Row(
                   children: [
