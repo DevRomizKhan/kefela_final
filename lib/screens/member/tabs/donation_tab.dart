@@ -378,7 +378,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
           .where('memberId', isEqualTo: _currentUserId)
           .where('monthlyDonationId', isEqualTo: monthlyDonationId)
           .where('month', isNotEqualTo: DateFormat('yyyy-MM').format(DateTime.now()))
-          //.orderBy('paidAt', descending: true)
+          .orderBy('paidAt', descending: true) // Fixed: Added orderBy
           .limit(3)
           .snapshots(),
       builder: (context, snapshot) {
@@ -1135,7 +1135,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
       stream: _firestore
           .collection('fundDonations')
           .where('memberId', isEqualTo: _currentUserId)
-         // .orderBy('donatedAt', descending: true)
+          .orderBy('donatedAt', descending: true) // Fixed: Added orderBy
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1539,7 +1539,9 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
                   },
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(
+                  height: 16
+              ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

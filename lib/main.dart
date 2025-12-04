@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green, // primary green
           fontFamily: 'Libertinus', // global font
 
-          textTheme: const TextTheme(
+          textTheme : const TextTheme(
             bodyMedium: TextStyle(
               color: Colors.black, // text black
             ),
