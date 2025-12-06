@@ -8,6 +8,7 @@ import 'package:kafela/screens/member/tabs/donation_tab.dart';
 import 'tabs/member_dashboard_tab.dart';
 import 'tabs/activity/activity_tab.dart';
 import 'tabs/member_profile_tab.dart';
+import 'tabs/books_tab.dart';
 
 class MemberDashboard extends StatefulWidget {
   const MemberDashboard({super.key});
@@ -52,6 +53,7 @@ class _MemberDashboardState extends State<MemberDashboard> {
     // const MemberGroupsTab(),
     const MemberActivityTab(),
     const MemberDonationPanel(),
+    const BooksTab(),
     const MemberProfileTab(),
   ];
 
@@ -81,6 +83,10 @@ class _MemberDashboardState extends State<MemberDashboard> {
         icon: Icon(Icons.group),
         label: 'Donation',
       ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.book),
+      label: 'Books',
+    ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.person),
       label: 'Profile',

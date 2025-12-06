@@ -7,6 +7,7 @@ import 'tabs/reports_tab.dart';
 import 'tabs/routine_tab.dart';
 import 'tabs/tasks_tab.dart';
 import 'tabs/groups_tab.dart';
+import 'tabs/admin_books_tab.dart';
 import 'tabs/logout_tab.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -29,6 +30,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     const TasksTab(),
     const DonationTab(),
     const GroupsTab(),
+    const AdminBooksTab(),
     const LogoutTab(),
   ];
 
@@ -61,6 +63,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
     const BottomNavigationBarItem(
       icon: Icon(Icons.group),
       label: 'Groups',
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.book),
+      label: 'Books',
     ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.logout),
