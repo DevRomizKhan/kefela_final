@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kafela/services/database_service.dart';
+import 'package:kafela/services/splash_content_service.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'screens/shared/auth_wrapper.dart';
+import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
 
 void main() async {
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<DatabaseService>(
           create: (_) => DatabaseService(),
+        ),
+        Provider<SplashContentService>(
+          create: (_) => SplashContentService(),
         ),
       ],
       child: MaterialApp(
@@ -49,7 +53,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const AuthWrapper(),
+        home: const SplashScreen(),
       ),
     );
   }

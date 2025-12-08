@@ -6,9 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({
@@ -2069,7 +2066,7 @@ class _ReportsTabState extends State<ReportsTab> {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 1,
+          childAspectRatio: .9,
           children: [
             _buildPerformanceCard(
               'Meeting Attendance',

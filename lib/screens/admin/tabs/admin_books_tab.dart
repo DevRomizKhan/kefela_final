@@ -29,7 +29,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
     if (_searchQuery.isEmpty) {
       return _booksService.getAllBooks();
     }
-    
+
     if (_searchType == 'name') {
       return _booksService.searchBooksByName(_searchQuery);
     } else {
@@ -43,11 +43,11 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
       backgroundColor: Colors.grey[50],
       body: Column(
         children: [
-          // Search Header
+          // Search Header - Made Green
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.green, // Changed to green
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -59,6 +59,9 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Add the SizedBox BEFORE the Row, not inside it
+                const SizedBox(height: 12),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -67,6 +70,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     ElevatedButton.icon(
@@ -74,8 +78,8 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                       icon: const Icon(Icons.add),
                       label: const Text('নতুন বই'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 12,
@@ -88,8 +92,8 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                
-                // Search Bar
+
+                // Search Bar - Made smaller
                 TextField(
                   controller: _searchController,
                   onChanged: (value) {
@@ -98,20 +102,20 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                     });
                   },
                   decoration: InputDecoration(
-                    hintText: _searchType == 'name' 
-                        ? 'বইয়ের নাম দিয়ে খুঁজুন...' 
+                    hintText: _searchType == 'name'
+                        ? 'বইয়ের নাম দিয়ে খুঁজুন...'
                         : 'লেখকের নাম দিয়ে খুঁজুন...',
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
-                            },
-                          )
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = '';
+                        });
+                      },
+                    )
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -119,19 +123,23 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                      borderSide: const BorderSide(color: Colors.white, width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2),
+                      borderSide: const BorderSide(color: Colors.white, width: 2),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                
-                // Search Type Toggle
+
+                // Search Type Toggle - Made smaller
                 Row(
                   children: [
                     Expanded(
@@ -154,7 +162,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
               ],
             ),
           ),
-          
+
           // Books List
           Expanded(
             child: StreamBuilder<List<Book>>(
@@ -246,13 +254,13 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Reduced padding
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.white,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
-            width: isSelected ? 2 : 1,
+            color: Colors.white,
+            width: 1,
           ),
         ),
         child: Row(
@@ -260,14 +268,15 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
           children: [
             Icon(
               icon,
-              size: 18,
-              color: isSelected ? Colors.white : Colors.grey[600],
+              size: 16, // Smaller icon
+              color: isSelected ? Colors.green : Colors.white,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.grey[700],
+                fontSize: 14, // Smaller font
+                color: isSelected ? Colors.green : Colors.white,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -279,34 +288,34 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
 
   Widget _buildBookCard(Book book) {
     final isAvailable = book.stockQuantity > 0;
-    
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8), // Reduced margin
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12), // Reduced padding
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Book Icon
+            // Book Icon - Changed to black
             Container(
-              width: 60,
-              height: 80,
+              width: 50, // Smaller
+              height: 70, // Smaller
               decoration: BoxDecoration(
-                color: isAvailable ? Colors.blue[50] : Colors.grey[200],
+                color: isAvailable ? Colors.grey[100] : Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 Icons.book,
-                size: 32,
-                color: isAvailable ? Colors.blue : Colors.grey,
+                size: 28, // Smaller icon
+                color: Colors.teal, // Changed to black
               ),
             ),
-            const SizedBox(width: 16),
-            
+            const SizedBox(width: 12),
+
             // Book Details
             Expanded(
               child: Column(
@@ -315,9 +324,11 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   Text(
                     book.bookName,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 15, // Slightly smaller
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   if (book.author.isNotEmpty)
@@ -329,15 +340,17 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                           child: Text(
                             book.author,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13, // Smaller
                               color: Colors.grey[600],
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                   const SizedBox(height: 8),
-                  
+
                   // Stock Control
                   Row(
                     children: [
@@ -347,12 +360,12 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                             : null,
                         icon: const Icon(Icons.remove_circle_outline),
                         color: Colors.red,
-                        iconSize: 28,
+                        iconSize: 24, // Smaller
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                          horizontal: 12, // Reduced
+                          vertical: 6, // Reduced
                         ),
                         decoration: BoxDecoration(
                           color: isAvailable ? Colors.green[50] : Colors.red[50],
@@ -361,7 +374,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                         child: Text(
                           '${book.stockQuantity}',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16, // Smaller
                             fontWeight: FontWeight.bold,
                             color: isAvailable ? Colors.green[700] : Colors.red[700],
                           ),
@@ -371,27 +384,29 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                         onPressed: () => _updateStock(book, book.stockQuantity + 1),
                         icon: const Icon(Icons.add_circle_outline),
                         color: Colors.green,
-                        iconSize: 28,
+                        iconSize: 24, // Smaller
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            
-            // Action Buttons
+
+            // Action Buttons - Only edit blue, delete red
             Column(
               children: [
                 IconButton(
                   onPressed: () => _showEditBookDialog(book),
                   icon: const Icon(Icons.edit),
-                  color: Colors.blue,
+                  color: Colors.blue, // Keep blue for edit
+                  iconSize: 20, // Smaller
                   tooltip: 'সম্পাদনা করুন',
                 ),
                 IconButton(
                   onPressed: () => _confirmDelete(book),
                   icon: const Icon(Icons.delete),
-                  color: Colors.red,
+                  color: Colors.red, // Keep red for delete
+                  iconSize: 20, // Smaller
                   tooltip: 'মুছে ফেলুন',
                 ),
               ],
@@ -439,7 +454,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
         ),
         title: const Row(
           children: [
-            Icon(Icons.add_circle, color: Colors.blue),
+            Icon(Icons.add_circle, color: Colors.green), // Changed to green
             SizedBox(width: 12),
             Text('নতুন বই যোগ করুন'),
           ],
@@ -455,7 +470,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'বইয়ের নাম *',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.book),
+                    prefixIcon: Icon(Icons.book, color: Colors.teal), // Green icon
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -470,7 +485,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'লেখকের নাম',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Icon(Icons.person, color: Colors.black), // Green icon
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -479,7 +494,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'স্টক সংখ্যা *',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.inventory),
+                    prefixIcon: Icon(Icons.inventory, color: Colors.green), // Green icon
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -515,9 +530,9 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                   );
-                  
+
                   await _booksService.addBook(book);
-                  
+
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -539,6 +554,10 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                 }
               }
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('যোগ করুন'),
           ),
         ],
@@ -560,7 +579,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
         ),
         title: const Row(
           children: [
-            Icon(Icons.edit, color: Colors.blue),
+            Icon(Icons.edit, color: Colors.green), // Changed to green
             SizedBox(width: 12),
             Text('বই সম্পাদনা করুন'),
           ],
@@ -576,7 +595,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'বইয়ের নাম *',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.book),
+                    prefixIcon: Icon(Icons.book, color: Colors.teal), // Green icon
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -591,7 +610,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'লেখকের নাম',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Icon(Icons.person, color: Colors.green), // Green icon
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -600,7 +619,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                   decoration: const InputDecoration(
                     labelText: 'স্টক সংখ্যা *',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.inventory),
+                    prefixIcon: Icon(Icons.inventory, color: Colors.green), // Green icon
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -633,7 +652,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                     'author': authorController.text.trim(),
                     'stockQuantity': int.parse(stockController.text),
                   });
-                  
+
                   if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -655,6 +674,10 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                 }
               }
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('আপডেট করুন'),
           ),
         ],
@@ -686,7 +709,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
             onPressed: () async {
               try {
                 await _booksService.deleteBook(book.id);
-                
+
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -725,12 +748,12 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
       '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
       '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
     };
-    
+
     String englishNum = bengaliNum;
     bengaliDigits.forEach((bengali, english) {
       englishNum = englishNum.replaceAll(bengali, english);
     });
-    
+
     return int.tryParse(englishNum) ?? 0;
   }
 
@@ -805,7 +828,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
       for (var entry in booksData.entries) {
         try {
           final bookData = entry.value as Map<String, dynamic>;
-          
+
           final book = {
             'bookName': bookData['bookName'] ?? '',
             'author': bookData['author'] ?? 'অজানা লেখক',
@@ -813,7 +836,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
             'createdAt': Timestamp.now(),
             'updatedAt': Timestamp.now(),
           };
-          
+
           await firestore.collection('books').add(book);
           successCount++;
         } catch (e) {
@@ -825,7 +848,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
       // Close progress dialog
       if (mounted) {
         Navigator.pop(context);
-        
+
         // Show success message
         showDialog(
           context: context,
@@ -835,19 +858,26 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
             ),
             title: const Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.green),
+                Icon(
+                    Icons.check_circle,
+                    color: Colors.green
+                ),
                 SizedBox(width: 12),
                 Text('সফল!'),
               ],
             ),
             content: Text(
               '✅ সফলভাবে ইমপোর্ট: $successCount টি বই\n'
-              '❌ ব্যর্থ: $errorCount টি বই\n'
-              '📚 মোট: ${booksData.length} টি বই',
+                  '❌ ব্যর্থ: $errorCount টি বই\n'
+                  '📚 মোট: ${booksData.length} টি বই',
             ),
             actions: [
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text('ঠিক আছে'),
               ),
             ],
@@ -858,7 +888,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
       // Close progress dialog
       if (mounted) {
         Navigator.pop(context);
-        
+
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -184,66 +184,98 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                     final donation = donations[index].data() as Map<String, dynamic>;
                     final donationId = donations[index].id;
 
-                    return Card(
-                      color: Colors.white,
-                      margin: const EdgeInsets.only(bottom: 8),
-                      elevation: 2,
-                      child: ListTile(
-                        leading: const Icon(Icons.assignment, color: Colors.black),
-                        title: Text(
-                          donation['memberName'] ?? 'Unknown Member',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                    return InkWell(
+                      onTap: () => _viewDonationDetails(donation, donationId),
+                      child: Card(
+                        color: Colors.white,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        elevation: 2,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Monthly Amount: ৳${donation['monthlyAmount']?.toStringAsFixed(2) ?? '0.00'}',
-                              style: const TextStyle(color: Colors.black87),
-                            ),
-                            Text(
-                              'Email: ${donation['memberEmail'] ?? 'No email'}',
-                              style: const TextStyle(color: Colors.black54, fontSize: 12),
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: donation['status'] == 'active'
-                                    ? Colors.green.withOpacity(0.1)
-                                    : Colors.black.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                donation['status'] ?? 'active',
-                                style: TextStyle(
-                                  color: donation['status'] == 'active' ? Colors.green : Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                          constraints: BoxConstraints(
+                            minHeight: 80,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.assignment, color: Colors.black, size: 24),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      donation['memberName'] ?? 'Unknown Member',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Monthly: ৳${donation['monthlyAmount']?.toStringAsFixed(2) ?? '0.00'}',
+                                      style: const TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      donation['memberEmail'] ?? 'No email',
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 11,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: donation['status'] == 'active'
+                                            ? Colors.green.withOpacity(0.1)
+                                            : Colors.black.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        donation['status'] ?? 'active',
+                                        style: TextStyle(
+                                          color: donation['status'] == 'active' ? Colors.green : Colors.black,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.black, size: 20),
-                              onPressed: () => _editMonthlyDonation(donation, donationId),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.visibility, color: Colors.green, size: 20),
-                              onPressed: () => _viewDonationDetails(donation, donationId),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                              onPressed: () => _deleteMonthlyDonation(donationId, donation['memberName'] ?? 'Member'), // ← NEW CODE
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, color: Colors.black, size: 18),
+                                    padding: const EdgeInsets.all(0),
+                                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                    onPressed: () => _editMonthlyDonation(donation, donationId),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                                    padding: const EdgeInsets.all(0),
+                                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                    onPressed: () => _deleteMonthlyDonation(donationId, donation['memberName'] ?? 'Member'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -269,7 +301,6 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
     );
   }
 
-  // ADD THIS METHOD: Edit Monthly Donation
   void _editMonthlyDonation(Map<String, dynamic> donation, String donationId) {
     Navigator.push(
       context,
@@ -290,7 +321,6 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
     );
   }
 
-  // Update the _deleteMonthlyDonation method to show member name:
   Future<void> _deleteMonthlyDonation(String donationId, String memberName) async {
     showDialog(
       context: context,
@@ -459,7 +489,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
               children: [
                 // Member Selection
                 DropdownButtonFormField<String>(
-                  isExpanded: true, // Important for responsiveness
+                  isExpanded: true,
                   value: _selectedMember.isEmpty && widget.members.isNotEmpty
                       ? widget.members.first['uid']
                       : _selectedMember,
@@ -478,7 +508,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
                       child: Text(
                         '${member['name']} (${member['email']})',
                         style: const TextStyle(color: Colors.black),
-                        overflow: TextOverflow.ellipsis, // Prevent text overflow
+                        overflow: TextOverflow.ellipsis,
                       ),
                     );
                   }).toList(),
@@ -509,7 +539,6 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
 
                 // Info Card
                 Card(
-                  // color: Colors.black.withOpacity(0.1),
                   color: Colors.white,
                   child: const Padding(
                     padding: EdgeInsets.all(16.0),
@@ -537,8 +566,8 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
                           '• This amount will be assigned as monthly donation for the selected member\n• Member can pay this amount month-wise from their panel\n• Member can pay the exact amount or any amount they wish\n• Payments require admin verification',
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 14, // Slightly larger for better readability
-                            height: 1.4, // Better line spacing
+                            fontSize: 14,
+                            height: 1.4,
                           ),
                         ),
                       ],
@@ -794,7 +823,6 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              // Show verification status
                               const SizedBox(height: 4),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -990,7 +1018,6 @@ class FundRaiseSection extends StatefulWidget {
   State<FundRaiseSection> createState() => _FundRaiseSectionState();
 }
 
-// ==================== FUND RAISE SECTION ====================
 class _FundRaiseSectionState extends State<FundRaiseSection> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -1012,7 +1039,6 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
     );
   }
 
-  // ADD THIS METHOD: Edit Fund Raise
   void _editFundRaise(Map<String, dynamic> fundRaise, String fundRaiseId) {
     Navigator.push(
       context,
@@ -1033,7 +1059,6 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
     );
   }
 
-  // ADD THIS METHOD: Delete Fund Raise
   Future<void> _deleteFundRaise(String fundRaiseId, String fundName) async {
     showDialog(
       context: context,
@@ -1088,7 +1113,7 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Header Card (same as before)
+          // Header Card
           Card(
             color: Colors.white,
             elevation: 4,
@@ -1117,7 +1142,7 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
           ),
           const SizedBox(height: 16),
 
-          // Fund Raises List - UPDATE THIS PART
+          // Fund Raises List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _firestore
@@ -1157,12 +1182,14 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
                     final fundRaise = fundRaises[index].data() as Map<String, dynamic>;
                     final fundRaiseId = fundRaises[index].id;
 
-                    return FundRaiseCard(
-                      fundRaise: fundRaise,
-                      fundRaiseId: fundRaiseId,
+                    return InkWell(
                       onTap: () => _viewFundRaiseDetails(fundRaise, fundRaiseId),
-                      onEdit: () => _editFundRaise(fundRaise, fundRaiseId), // ADD THIS
-                      onDelete: () => _deleteFundRaise(fundRaiseId, fundRaise['fundName'] ?? 'Fund Raise'), // ADD THIS
+                      child: FundRaiseCard(
+                        fundRaise: fundRaise,
+                        fundRaiseId: fundRaiseId,
+                        onEdit: () => _editFundRaise(fundRaise, fundRaiseId),
+                        onDelete: () => _deleteFundRaise(fundRaiseId, fundRaise['fundName'] ?? 'Fund Raise'),
+                      ),
                     );
                   },
                 );
@@ -1191,7 +1218,6 @@ class _FundRaiseSectionState extends State<FundRaiseSection> {
 class FundRaiseCard extends StatelessWidget {
   final Map<String, dynamic> fundRaise;
   final String fundRaiseId;
-  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -1199,7 +1225,6 @@ class FundRaiseCard extends StatelessWidget {
     super.key,
     required this.fundRaise,
     required this.fundRaiseId,
-    required this.onTap,
     required this.onEdit,
     required this.onDelete,
   });
@@ -1211,89 +1236,128 @@ class FundRaiseCard extends StatelessWidget {
     final isActive = endDate.isAfter(DateTime.now());
     final targetAmount = fundRaise['targetAmount'];
     final totalCollected = fundRaise['totalCollected'] ?? 0.0;
+    final percentage = targetAmount != null && targetAmount > 0
+        ? ((totalCollected / targetAmount) * 100)
+        : 0.0;
 
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.only(bottom: 8),
       elevation: 2,
-      child: ListTile(
-        leading: Icon(
-          Icons.volunteer_activism,
-          color: isActive ? Colors.green : Colors.black,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
         ),
-        title: Text(
-          fundRaise['fundName'] ?? 'Unknown Fund',
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+        constraints: BoxConstraints(
+          minHeight: 80,
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Account: ${fundRaise['accountNumber'] ?? 'Not set'}',
-              style: const TextStyle(color: Colors.black87),
+            Icon(
+              Icons.volunteer_activism,
+              color: isActive ? Colors.green : Colors.black,
+              size: 24,
             ),
-            Text(
-              'Duration: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}',
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
-            ),
-            if (targetAmount != null)
-              Text(
-                'Target: ৳${targetAmount.toStringAsFixed(2)} | Collected: ৳${totalCollected.toStringAsFixed(2)}',
-                style: const TextStyle(color: Colors.black87, fontSize: 12),
-              ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    isActive ? 'Active' : 'Completed',
-                    style: TextStyle(
-                      color: isActive ? Colors.green : Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                if (targetAmount != null && targetAmount > 0)
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    '${((totalCollected / targetAmount) * 100).toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      color: (totalCollected / targetAmount) >= 1
-                          ? Colors.green
-                          : Colors.black,
-                      fontSize: 12,
+                    fundRaise['fundName'] ?? 'Unknown Fund',
+                    style: const TextStyle(
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Account: ${fundRaise['accountNumber'] ?? 'Not set'}',
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 12,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}',
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 11,
                     ),
                   ),
+                  if (targetAmount != null)
+                    Text(
+                      'Target: ৳${targetAmount.toStringAsFixed(2)} | Collected: ৳${totalCollected.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isActive
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.black.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          isActive ? 'Active' : 'Completed',
+                          style: TextStyle(
+                            color: isActive ? Colors.green : Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      if (targetAmount != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '${percentage.toStringAsFixed(1)}%',
+                          style: TextStyle(
+                            color: percentage >= 100
+                                ? Colors.green
+                                : Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.black, size: 18),
+                  padding: const EdgeInsets.all(0),
+                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                  onPressed: onEdit,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                  padding: const EdgeInsets.all(0),
+                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                  onPressed: onDelete,
+                ),
               ],
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black, size: 20),
-              onPressed: onEdit,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-              onPressed: onDelete,
-            ),
-            IconButton(
-              icon: const Icon(Icons.visibility, color: Colors.green, size: 20),
-              onPressed: onTap,
             ),
           ],
         ),
@@ -1810,7 +1874,6 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              // Show verification status
                               const SizedBox(height: 4),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -2267,7 +2330,6 @@ class _EditFundRaisePageState extends State<EditFundRaisePage> {
   }
 }
 
-
 // ==================== EDIT MONTHLY DONATION PAGE ====================
 class EditMonthlyDonationPage extends StatefulWidget {
   final Map<String, dynamic> donation;
@@ -2515,28 +2577,28 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
 
   Widget _buildReadOnlyRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: const TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                '$label:',
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(color: Colors.black87),
+            Expanded(
+              child: Text(
+                value,
+                style: const TextStyle(color: Colors.black87),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+         ),
+       );
+    }
 }

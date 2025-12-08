@@ -483,7 +483,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
       default:
         return 'PENDING';
     }
-  }
+  } //Monthly Donations
 }
 
 // ==================== PAY MONTHLY DONATION PAGE ====================

@@ -26,7 +26,7 @@ class _BooksTabState extends State<BooksTab> {
     if (_searchQuery.isEmpty) {
       return _booksService.getAllBooks();
     }
-    
+
     if (_searchType == 'name') {
       return _booksService.searchBooksByName(_searchQuery);
     } else {
@@ -40,11 +40,11 @@ class _BooksTabState extends State<BooksTab> {
       backgroundColor: Colors.grey[50],
       body: Column(
         children: [
-          // Search Header
+          // Search Header - Made Green
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.green, // Changed to green
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -56,16 +56,18 @@ class _BooksTabState extends State<BooksTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 16), // Fixed: Changed Sizedox to SizedBox and fixed property
                 const Text(
                   'বই সংগ্রহ',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 16),
-                
-                // Search Bar
+
+                // Search Bar - Made smaller
                 TextField(
                   controller: _searchController,
                   onChanged: (value) {
@@ -74,20 +76,20 @@ class _BooksTabState extends State<BooksTab> {
                     });
                   },
                   decoration: InputDecoration(
-                    hintText: _searchType == 'name' 
-                        ? 'বইয়ের নাম দিয়ে খুঁজুন...' 
+                    hintText: _searchType == 'name'
+                        ? 'বইয়ের নাম দিয়ে খুঁজুন...'
                         : 'লেখকের নাম দিয়ে খুঁজুন...',
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
-                            },
-                          )
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = '';
+                        });
+                      },
+                    )
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -95,19 +97,23 @@ class _BooksTabState extends State<BooksTab> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
+                      borderSide: const BorderSide(color: Colors.white, width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2),
+                      borderSide: const BorderSide(color: Colors.white, width: 2),
                     ),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14, // Reduced vertical padding
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                
-                // Search Type Toggle
+
+                // Search Type Toggle - Made smaller
                 Row(
                   children: [
                     Expanded(
@@ -130,7 +136,7 @@ class _BooksTabState extends State<BooksTab> {
               ],
             ),
           ),
-          
+
           // Books List
           Expanded(
             child: StreamBuilder<List<Book>>(
@@ -163,7 +169,7 @@ class _BooksTabState extends State<BooksTab> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.book_outlined, size: 64, color: Colors.grey[400]),
+                        Icon(Icons.book_outlined, size: 64, color: Colors.teal),
                         const SizedBox(height: 16),
                         Text(
                           _searchQuery.isEmpty ? 'কোন বই নেই' : 'কোন বই পাওয়া যায়নি',
@@ -199,13 +205,13 @@ class _BooksTabState extends State<BooksTab> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Reduced padding
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.white,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
-            width: isSelected ? 2 : 1,
+            color: Colors.white,
+            width: 1,
           ),
         ),
         child: Row(
@@ -213,14 +219,15 @@ class _BooksTabState extends State<BooksTab> {
           children: [
             Icon(
               icon,
-              size: 18,
-              color: isSelected ? Colors.white : Colors.grey[600],
+              size: 16, // Smaller icon
+              color: isSelected ? Colors.green : Colors.white,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.grey[700],
+                fontSize: 14, // Smaller font
+                color: isSelected ? Colors.green : Colors.white,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -232,9 +239,9 @@ class _BooksTabState extends State<BooksTab> {
 
   Widget _buildBookCard(Book book) {
     final isAvailable = book.stockQuantity > 0;
-    
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8), // Reduced margin
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -243,26 +250,27 @@ class _BooksTabState extends State<BooksTab> {
         onTap: () => _showBookDetails(book),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12), // Reduced padding
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Book Icon
+              // Book Icon - Color changes based on availability
               Container(
-                width: 60,
-                height: 80,
+                width: 50,
+                height: 70,
                 decoration: BoxDecoration(
-                  color: isAvailable ? Colors.blue[50] : Colors.grey[200],
+                  color: isAvailable ? Colors.grey[100] : Colors.grey[200],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.book,
-                  size: 32,
-                  color: isAvailable ? Colors.blue : Colors.grey,
+                  size: 28,
+                  color: isAvailable ? Colors.teal : Colors.black, // ← Changed here
                 ),
               ),
-              const SizedBox(width: 16),
-              
+
+              const SizedBox(width: 12),
+
               // Book Details
               Expanded(
                 child: Column(
@@ -271,9 +279,11 @@ class _BooksTabState extends State<BooksTab> {
                     Text(
                       book.bookName,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 15, // Slightly smaller
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     if (book.author.isNotEmpty)
@@ -285,24 +295,26 @@ class _BooksTabState extends State<BooksTab> {
                             child: Text(
                               book.author,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13, // Smaller
                                 color: Colors.grey[600],
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     const SizedBox(height: 8),
-                    
+
                     // Stock Status
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                        horizontal: 12, // Reduced
+                        vertical: 6, // Reduced
                       ),
                       decoration: BoxDecoration(
-                        color: isAvailable 
-                            ? Colors.green[50] 
+                        color: isAvailable
+                            ? Colors.green[50]
                             : Colors.red[50],
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -311,16 +323,16 @@ class _BooksTabState extends State<BooksTab> {
                         children: [
                           Icon(
                             isAvailable ? Icons.check_circle : Icons.cancel,
-                            size: 16,
+                            size: 14, // Smaller
                             color: isAvailable ? Colors.green : Colors.red,
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            isAvailable 
-                                ? 'স্টকে আছে (${book.stockQuantity})' 
+                            isAvailable
+                                ? 'স্টকে আছে (${book.stockQuantity})'
                                 : 'স্টকে নেই',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11, // Smaller
                               fontWeight: FontWeight.w600,
                               color: isAvailable ? Colors.green[700] : Colors.red[700],
                             ),
@@ -331,9 +343,8 @@ class _BooksTabState extends State<BooksTab> {
                   ],
                 ),
               ),
-              
               // Arrow Icon
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
+              Icon(Icons.chevron_right, color: Colors.grey[400], size: 20), // Smaller
             ],
           ),
         ),
@@ -350,7 +361,7 @@ class _BooksTabState extends State<BooksTab> {
         ),
         title: Row(
           children: [
-            Icon(Icons.book, color: Colors.blue),
+            Icon(Icons.book, color: Colors.teal), // Changed to green
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -370,8 +381,8 @@ class _BooksTabState extends State<BooksTab> {
             ],
             _buildDetailRow(
               'স্টক',
-              book.stockQuantity > 0 
-                  ? '${book.stockQuantity} টি বই আছে' 
+              book.stockQuantity > 0
+                  ? '${book.stockQuantity} টি বই আছে'
                   : 'স্টকে নেই',
               Icons.inventory,
             ),
@@ -380,6 +391,9 @@ class _BooksTabState extends State<BooksTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.green, // Green text
+            ),
             child: const Text('বন্ধ করুন'),
           ),
         ],
@@ -391,7 +405,7 @@ class _BooksTabState extends State<BooksTab> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
+        Icon(icon, size: 20, color: Colors.green), // Green icons
         const SizedBox(width: 12),
         Expanded(
           child: Column(
