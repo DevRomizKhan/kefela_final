@@ -726,6 +726,7 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
+
   Future<void> _downloadReportAsPDF() async {
     if (_selectedUserReport == null) return;
 
