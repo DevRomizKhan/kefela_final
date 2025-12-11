@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final email = emailController.text.trim();
       final password = passwordController.text.trim();
 
-      final authService = Provider.of<AuthService>(context, listen: false);
+      final authService = Get.find<AuthService>();
       await authService.signInWithEmailAndPassword(email, password);
 
       // Navigation is handled by AuthWrapper

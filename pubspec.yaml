@@ -24,7 +24,7 @@ dependencies:
   flutter_svg: ^2.2.3
 
   # State Management
-  provider: ^6.1.5+1
+  get: ^4.6.6
 
   # Charts (Choose ONE to reduce app size)
   fl_chart: ^0.55.2

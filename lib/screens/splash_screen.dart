@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../services/splash_content_service.dart';
 import '../models/splash_content_model.dart';
 import 'shared/auth_wrapper.dart';
@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _loadContent() async {
-    final service = Provider.of<SplashContentService>(context, listen: false);
+    final service = Get.find<SplashContentService>();
     
     try {
       final content = await service.getRandomContent();

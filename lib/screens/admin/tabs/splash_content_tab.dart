@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../../../services/splash_content_service.dart';
 import '../../../models/splash_content_model.dart';
 
@@ -13,7 +13,7 @@ class SplashContentTab extends StatefulWidget {
 class _SplashContentTabState extends State<SplashContentTab> {
   @override
   Widget build(BuildContext context) {
-    final service = Provider.of<SplashContentService>(context);
+    final service = Get.find<SplashContentService>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -319,10 +319,7 @@ class _SplashContentTabState extends State<SplashContentTab> {
                   return;
                 }
 
-                final service = Provider.of<SplashContentService>(
-                  context,
-                  listen: false,
-                );
+                final service = Get.find<SplashContentService>();
 
                 try {
                   if (isEdit) {
@@ -400,10 +397,7 @@ class _SplashContentTabState extends State<SplashContentTab> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final service = Provider.of<SplashContentService>(
-                context,
-                listen: false,
-              );
+              final service = Get.find<SplashContentService>();
 
               try {
                 await service.deleteContent(content.id);

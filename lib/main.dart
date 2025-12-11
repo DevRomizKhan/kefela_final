@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kafela/services/database_service.dart';
 import 'package:kafela/services/splash_content_service.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'bindings/initial_binding.dart';
 import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'services/auth_service.dart';
@@ -20,41 +21,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthService>(create: (_) => AuthService()),
-        Provider<DatabaseService>(
-          create: (_) => DatabaseService(),
-        ),
-        Provider<SplashContentService>(
-          create: (_) => SplashContentService(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Kafela',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white, // whole app background white
-          primaryColor: Colors.green, // primary green
-          fontFamily: 'Libertinus', // global font
+    return GetMaterialApp(
+      title: 'Kafela',
+      debugShowCheckedModeBanner: false,
+      initialBinding: InitialBinding(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white, // whole app background white
+        primaryColor: Colors.green, // primary green
+        fontFamily: 'Libertinus', // global font
 
-          textTheme : const TextTheme(
-            bodyMedium: TextStyle(
-              color: Colors.black, // text black
-            ),
-          ),
-
-          elevatedButtonTheme: const ElevatedButtonThemeData(
-            style: ButtonStyle(
-              backgroundColor:
-                  WidgetStatePropertyAll(Colors.green), // global button green
-              foregroundColor:
-                  WidgetStatePropertyAll(Colors.white), // button text white
-            ),
+        textTheme : const TextTheme(
+          bodyMedium: TextStyle(
+            color: Colors.black, // text black
           ),
         ),
-        home: const SplashScreen(),
+
+        elevatedButtonTheme: const ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor:
+                WidgetStatePropertyAll(Colors.green), // global button green
+            foregroundColor:
+                WidgetStatePropertyAll(Colors.white), // button text white
+          ),
+        ),
       ),
+      home: const SplashScreen(),
     );
   }
 }
