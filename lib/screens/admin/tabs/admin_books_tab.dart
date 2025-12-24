@@ -201,22 +201,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
                           _searchQuery.isEmpty ? 'কোন বই নেই' : 'কোন বই পাওয়া যায়নি',
                           style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                         ),
-                        if (_searchQuery.isEmpty) ...[
-                          const SizedBox(height: 16),
-                          ElevatedButton.icon(
-                            onPressed: () => _importBooksFromJSON(),
-                            icon: const Icon(Icons.upload_file),
-                            label: const Text('১৩২টি বই ইমপোর্ট করুন'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              ),
-                            ),
-                          ),
-                        ],
+                        // Removed the import button from here
                       ],
                     ),
                   );
@@ -235,13 +220,7 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _importBooksFromJSON(),
-        icon: const Icon(Icons.upload_file),
-        label: const Text('ইমপোর্ট করুন'),
-        backgroundColor: Colors.green,
-        tooltip: 'JSON থেকে বই ইমপোর্ট করুন',
-      ),
+      // Removed the floating action button
     );
   }
 
@@ -742,162 +721,5 @@ class _AdminBooksTabState extends State<AdminBooksTab> {
     );
   }
 
-  // Helper function to convert Bengali numerals to English
-  int _parseBengaliNumber(String bengaliNum) {
-    const bengaliDigits = {
-      '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
-      '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
-    };
-
-    String englishNum = bengaliNum;
-    bengaliDigits.forEach((bengali, english) {
-      englishNum = englishNum.replaceAll(bengali, english);
-    });
-
-    return int.tryParse(englishNum) ?? 0;
-  }
-
-  // Import all 132 books from JSON
-  Future<void> _importBooksFromJSON() async {
-    // Show confirmation dialog
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.upload_file, color: Colors.green),
-            SizedBox(width: 12),
-            Text('বই ইমপোর্ট করুন'),
-          ],
-        ),
-        content: const Text(
-          'আপনি কি ১৩২টি বই Firebase-এ ইমপোর্ট করতে চান?\n\nএটি কিছু সময় নিতে পারে।',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('না'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('হ্যাঁ, ইমপোর্ট করুন'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm != true) return;
-
-    // Show progress dialog
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => false,
-        child: const AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('বই ইমপোর্ট হচ্ছে...'),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    try {
-      // Load JSON from assets
-      final jsonString = await rootBundle.loadString('assets/books.json');
-      final Map<String, dynamic> booksData = json.decode(jsonString);
-
-      final firestore = FirebaseFirestore.instance;
-      int successCount = 0;
-      int errorCount = 0;
-
-      // Import each book
-      for (var entry in booksData.entries) {
-        try {
-          final bookData = entry.value as Map<String, dynamic>;
-
-          final book = {
-            'bookName': bookData['bookName'] ?? '',
-            'author': bookData['author'] ?? 'অজানা লেখক',
-            'stockQuantity': _parseBengaliNumber(bookData['quantity'] ?? '0'),
-            'createdAt': Timestamp.now(),
-            'updatedAt': Timestamp.now(),
-          };
-
-          await firestore.collection('books').add(book);
-          successCount++;
-        } catch (e) {
-          errorCount++;
-          print('Error importing ${entry.key}: $e');
-        }
-      }
-
-      // Close progress dialog
-      if (mounted) {
-        Navigator.pop(context);
-
-        // Show success message
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: const Row(
-              children: [
-                Icon(
-                    Icons.check_circle,
-                    color: Colors.green
-                ),
-                SizedBox(width: 12),
-                Text('সফল!'),
-              ],
-            ),
-            content: Text(
-              '✅ সফলভাবে ইমপোর্ট: $successCount টি বই\n'
-                  '❌ ব্যর্থ: $errorCount টি বই\n'
-                  '📚 মোট: ${booksData.length} টি বই',
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('ঠিক আছে'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      // Close progress dialog
-      if (mounted) {
-        Navigator.pop(context);
-
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('ত্রুটি: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    }
-  }
+// Removed: _importBooksFromJSON function completely
 }

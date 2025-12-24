@@ -25,7 +25,7 @@ class _MemberDonationPanelState extends State<MemberDonationPanel> {
           elevation: 0,
           title: Center(
             child: const Text(
-              'My Donations',
+              'My Eyanot',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -37,7 +37,7 @@ class _MemberDonationPanelState extends State<MemberDonationPanel> {
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.green,
             tabs: [
-              Tab(text: 'Monthly Donation'),
+              Tab(text: 'Monthly Eyanot'),
               Tab(text: 'Fund Raise'),
             ],
           ),
@@ -103,7 +103,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Pay your assigned monthly donation here. You can pay the exact amount or any amount you wish.',
+                      'Pay your assigned monthly eyanot here. You can pay the exact amount or any amount you wish.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12,
@@ -137,12 +137,12 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
                         Icon(Icons.attach_money, size: 64, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
-                          'No monthly donation assigned',
+                          'No monthly eyanot assigned',
                           style: TextStyle(color: Colors.black54),
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Contact admin for monthly donation assignment',
+                          'Contact admin for monthly eyanot assignment',
                           style: TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                       ],
@@ -191,7 +191,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Monthly Donation',
+                        'Monthly Eyanot',
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -466,7 +466,7 @@ class _MemberMonthlyDonationSectionState extends State<MemberMonthlyDonationSect
   String _getVerificationMessage(String? status) {
     switch (status) {
       case 'verified':
-        return '✅ Verified - Legal Donation';
+        return '✅ Verified';
       case 'rejected':
         return '❌ Rejected - Not Valid';
       default:
@@ -628,7 +628,7 @@ class _PayMonthlyDonationPageState extends State<PayMonthlyDonationPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Pay Monthly Donation',
+          'Pay Monthly Eyanot',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -786,7 +786,7 @@ class _PayMonthlyDonationPageState extends State<PayMonthlyDonationPage> {
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.green),
                 ),
-                hintText: 'Enter donation amount',
+                hintText: 'Enter eyanot amount',
               ),
               style: const TextStyle(color: Colors.black),
             ),
@@ -936,7 +936,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
   void initState() {
     super.initState();
     _fetchUserData();
-    _debugCheckFundDonations();
+    // _debugCheckFundDonations();
   }
 
   void _fetchUserData() async {
@@ -952,33 +952,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
     }
   }
 
-  // Debug function to check fund donations
-  void _debugCheckFundDonations() async {
-    try {
-      final snapshot = await _firestore
-          .collection('fundDonations')
-          .where('memberId', isEqualTo: _currentUserId)
-          .get();
 
-      print('=== FUND DONATIONS DEBUG ===');
-      print('Current User ID: $_currentUserId');
-      print('Total donations found: ${snapshot.docs.length}');
-
-      for (var doc in snapshot.docs) {
-        final data = doc.data();
-        print('Donation ID: ${doc.id}');
-        print('Fund Name: ${data['fundName']}');
-        print('Amount: ${data['amount']}');
-        print('Status: ${data['status']}');
-        print('Member ID in doc: ${data['memberId']}');
-        print('Admin Feedback: ${data['adminFeedback']}');
-        print('---');
-      }
-      print('=== END DEBUG ===');
-    } catch (e) {
-      print('Debug error: $e');
-    }
-  }
 
   void _navigateToDonate(Map<String, dynamic> fundRaise) {
     Navigator.push(
@@ -1035,14 +1009,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
           Expanded(
             child: CustomScrollView(
               slivers: [
-                // Fund Donation History Section
-                SliverToBoxAdapter(
-                  child: _buildFundDonationHistory(),
-                ),
 
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 16),
-                ),
 
                 // Active Fund Raises Section
                 SliverToBoxAdapter(
@@ -1130,435 +1097,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
     );
   }
 
-  Widget _buildFundDonationHistory() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('fundDonations')
-          .where('memberId', isEqualTo: _currentUserId)
-          .orderBy('donatedAt', descending: true) // Fixed: Added orderBy
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(color: Colors.green),
-            ),
-          );
-        }
 
-        if (snapshot.hasError) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                const Icon(Icons.error, color: Colors.red, size: 24),
-                const SizedBox(height: 8),
-                Text(
-                  'Error loading donation history: ${snapshot.error}',
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black.withOpacity(0.2)),
-            ),
-            child: const Column(
-              children: [
-                Icon(Icons.history, color: Colors.black, size: 32),
-                SizedBox(height: 8),
-                Text(
-                  'No Fund Donations Yet',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Your fund donations will appear here once you make donations',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 12,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          );
-        }
-
-        final donations = snapshot.data!.docs;
-
-        return Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.green.withOpacity(0.2)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              const Row(
-                children: [
-                  Icon(Icons.history, color: Colors.green, size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'My Fund Donation History',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Summary Stats
-              _buildDonationSummary(donations),
-              const SizedBox(height: 16),
-
-              // Donation List
-              ...donations.take(3).map((donationDoc) {
-                final donation = donationDoc.data() as Map<String, dynamic>;
-                return _buildDonationHistoryItem(donation);
-              }).toList(),
-
-              // View All Button if more than 3
-              if (donations.length > 3) ...[
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () => _showAllDonationsHistory(donations),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.green,
-                    ),
-                    child: const Text(
-                      'View All Donations',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-  Widget _buildDonationSummary(List<QueryDocumentSnapshot> donations) {
-    final totalDonations = donations.length;
-    final verifiedCount = donations.where((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return data['status'] == 'verified';
-    }).length;
-    final pendingCount = donations.where((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return data['status'] == 'pending';
-    }).length;
-    final rejectedCount = donations.where((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return data['status'] == 'rejected';
-    }).length;
-    final totalAmount = donations.fold<double>(0, (sum, doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return sum + (data['amount'] ?? 0.0);
-    });
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildSummaryItem('Total', totalDonations.toString(), Colors.black),
-          _buildSummaryItem('Verified', verifiedCount.toString(), Colors.green),
-          _buildSummaryItem('Pending', pendingCount.toString(), Colors.black),
-          _buildSummaryItem('Rejected', rejectedCount.toString(), Colors.red),
-          _buildSummaryItem('Amount', '৳${totalAmount.toStringAsFixed(0)}', Colors.purple),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryItem(String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: 10,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDonationHistoryItem(Map<String, dynamic> donation) {
-    final donatedAt = (donation['donatedAt'] as Timestamp).toDate();
-    final status = donation['status'] ?? 'pending';
-    final verifiedAt = donation['verifiedAt'] != null
-        ? (donation['verifiedAt'] as Timestamp).toDate()
-        : null;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Row
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      donation['fundName'] ?? 'Fund Raise',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '৳${donation['amount']?.toStringAsFixed(2)} • ${DateFormat('MMM dd, yyyy').format(donatedAt)}',
-                      style: const TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _getDonationStatusColor(status).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  status.toUpperCase(),
-                  style: TextStyle(
-                    color: _getDonationStatusColor(status),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Status Message
-          Row(
-            children: [
-              Icon(
-                _getStatusIcon(status),
-                color: _getDonationStatusColor(status),
-                size: 16,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  _getFundDonationVerificationMessage(status),
-                  style: TextStyle(
-                    color: _getDonationStatusColor(status),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Verification Details
-          if (verifiedAt != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              'Verified on: ${DateFormat('MMM dd, yyyy').format(verifiedAt)}',
-              style: const TextStyle(
-                color: Colors.green,
-                fontSize: 11,
-              ),
-            ),
-          ],
-
-          // Admin Feedback
-          if (donation['adminFeedback'] != null && donation['adminFeedback'].toString().isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.feedback, size: 16, color: Colors.grey),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Admin Feedback:',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          donation['adminFeedback'].toString(),
-                          style: const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // Payment Method
-          const SizedBox(height: 6),
-          Text(
-            'Payment: ${donation['paymentMethod'] ?? 'Unknown'} • ${donation['transactionId'] ?? 'No ID'}',
-            style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status) {
-      case 'verified':
-        return Icons.verified;
-      case 'rejected':
-        return Icons.cancel;
-      default:
-        return Icons.pending;
-    }
-  }
-
-  void _showAllDonationsHistory(List<QueryDocumentSnapshot> donations) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'All Fund Donations',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: donations.length,
-                  itemBuilder: (context, index) {
-                    final donation = donations[index].data() as Map<String, dynamic>;
-                    return _buildDonationHistoryItem(donation);
-                  },
-                ),
-              ),
-              const SizedBox(
-                  height: 16
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('Close'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildFundRaiseCard(Map<String, dynamic> fundRaise) {
     final startDate = (fundRaise['startDate'] as Timestamp).toDate();
@@ -1764,27 +1303,7 @@ class _MemberFundRaiseSectionState extends State<MemberFundRaiseSection> {
     );
   }
 
-  Color _getDonationStatusColor(String? status) {
-    switch (status) {
-      case 'verified':
-        return Colors.green;
-      case 'rejected':
-        return Colors.red;
-      default:
-        return Colors.black;
-    }
-  }
 
-  String _getFundDonationVerificationMessage(String? status) {
-    switch (status) {
-      case 'verified':
-        return '✅ Verified - Legal Donation';
-      case 'rejected':
-        return '❌ Rejected - Not Valid';
-      default:
-        return '🕓 Pending - Awaiting Verification';
-    }
-  }
 }
 // ==================== DONATE TO FUND RAISE PAGE ====================
 class DonateToFundRaisePage extends StatefulWidget {

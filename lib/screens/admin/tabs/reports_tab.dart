@@ -393,7 +393,7 @@ class _ReportsTabState extends State<ReportsTab> {
             'status': (data['status']?.toString().toLowerCase() ?? 'pending'),
             'createdAt': donatedAt,
             'donatedAt': donatedAt,
-            'fundName': data['fundName']?.toString() ?? 'Fund Donation',
+            'fundName': data['fundName']?.toString() ?? 'Fund Eyanot',
             'paymentMethod': data['paymentMethod']?.toString() ?? 'Unknown',
             'transactionId': data['transactionId']?.toString() ?? 'N/A',
             'adminFeedback': data['adminFeedback']?.toString() ?? '',
@@ -468,7 +468,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 'amount': _safeParseDouble(data['amount']),
                 'status': (data['status']?.toString().toLowerCase() ?? 'pending'),
                 'createdAt': donatedAt,
-                'fundName': fundDoc.data()['fundName']?.toString() ?? 'Fund Donation',
+                'fundName': fundDoc.data()['fundName']?.toString() ?? 'Fund Eyanot',
               };
 
               allDonations.add(donation);
@@ -534,7 +534,7 @@ class _ReportsTabState extends State<ReportsTab> {
         'isAllTime': true,
       };
     } catch (e, stackTrace) {
-      print('Error fetching donation history: $e');
+      print('Error fetching Eyanot history: $e');
       print('Stack trace: $stackTrace');
 
       // Return safe default values with empty lists
@@ -583,13 +583,13 @@ class _ReportsTabState extends State<ReportsTab> {
         // Extract month from date
         return date != null
             ? DateFormat('MMMM yyyy').format(date)
-            : 'Monthly Donation';
+            : 'Monthly Eyanot';
       }
       return storedMonthName;
     }
     return date != null
         ? DateFormat('MMMM yyyy').format(date)
-        : 'Monthly Donation';
+        : 'Monthly Eyanot';
   }
 
   void _showError(String message) {
@@ -794,7 +794,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 pw.Bullet(text: 'Meeting Attendance Summary'),
                 pw.Bullet(text: 'Prayer Attendance Details'),
                 pw.Bullet(text: 'Task Performance Analysis'),
-                pw.Bullet(text: 'Donation History Report'),
+                pw.Bullet(text: 'Eyanot History Report'),
               ],
             );
           },
@@ -914,12 +914,12 @@ class _ReportsTabState extends State<ReportsTab> {
         ),
       );
 
-      // Add Donation Report Page
+      // Add Eyanot Report Page
       final donationStats = report['donationStats'] as Map<String, dynamic>;
       final monthlyDonations = (donationStats['monthlyDonations'] as List?)?.cast<Map<String, dynamic>>() ?? [];
       final fundDonations = (donationStats['fundDonations'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
-      // Main Donation History Report Page
+      // Main Eyanot History Report Page
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -928,7 +928,7 @@ class _ReportsTabState extends State<ReportsTab> {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Donation History Report',
+                  'Eyanot History Report',
                   style: pw.TextStyle(
                     fontSize: 18,
                     fontWeight: pw.FontWeight.bold,
@@ -939,7 +939,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 // Summary stats
                 pw.Row(
                   children: [
-                    pw.Text('Total Donations: ${donationStats['totalDonations']}'),
+                    pw.Text('Total Eyanot: ${donationStats['totalDonations']}'),
                     pw.SizedBox(width: 20),
                     pw.Text('Total Amount: BDT ${_safeParseDouble(donationStats['totalAmount']).toStringAsFixed(2)}'),
                   ],
@@ -954,11 +954,9 @@ class _ReportsTabState extends State<ReportsTab> {
                     pw.Text('Rejected: ${donationStats['rejectedCount']}'),
                   ],
                 ),
-                //pw.SizedBox(height: 5),
-                //pw.Text('Verification Rate: ${_safeParseDouble(donationStats['verificationRate']).toStringAsFixed(1)}%'),
                 pw.SizedBox(height: 20),
 
-                // Donation summary
+                // Eyanot summary
                 ..._buildDonationPDFContent(donationStats),
               ],
             );
@@ -966,7 +964,7 @@ class _ReportsTabState extends State<ReportsTab> {
         ),
       );
 
-      // Add Monthly Donations Page (if any)
+      // Add Monthly Eyanot Page (if any)
       if (monthlyDonations.isNotEmpty) {
         pdf.addPage(
           pw.Page(
@@ -976,7 +974,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text(
-                    'Monthly Donations Report',
+                    'Monthly Eyanot Report',
                     style: pw.TextStyle(
                       fontSize: 18,
                       fontWeight: pw.FontWeight.bold,
@@ -987,14 +985,14 @@ class _ReportsTabState extends State<ReportsTab> {
                   // Summary stats
                   pw.Row(
                     children: [
-                      pw.Text('Total Monthly Donations: ${monthlyDonations.length}'),
+                      pw.Text('Total Monthly Eyanot: ${monthlyDonations.length}'),
                       pw.SizedBox(width: 20),
                       pw.Text('Total Amount: BDT ${_safeParseDouble(donationStats['totalMonthlyAmount']).toStringAsFixed(2)}'),
                     ],
                   ),
                   pw.SizedBox(height: 20),
 
-                  // Monthly Donations table
+                  // Monthly Eyanot table
                   ..._buildMonthlyDonationPDFContent(donationStats),
                 ],
               );
@@ -1003,7 +1001,7 @@ class _ReportsTabState extends State<ReportsTab> {
         );
       }
 
-      // Add Fund Raises Page (if any)
+      // Add Fund Eyanot Page (if any)
       if (fundDonations.isNotEmpty) {
         pdf.addPage(
           pw.Page(
@@ -1013,7 +1011,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text(
-                    'Fund Raises Report',
+                    'Fund Eyanot Report',
                     style: pw.TextStyle(
                       fontSize: 18,
                       fontWeight: pw.FontWeight.bold,
@@ -1024,14 +1022,14 @@ class _ReportsTabState extends State<ReportsTab> {
                   // Summary stats
                   pw.Row(
                     children: [
-                      pw.Text('Total Fund Raises: ${fundDonations.length}'),
+                      pw.Text('Total Fund Eyanot: ${fundDonations.length}'),
                       pw.SizedBox(width: 20),
                       pw.Text('Total Amount: BDT ${_safeParseDouble(donationStats['totalFundAmount']).toStringAsFixed(2)}'),
                     ],
                   ),
                   pw.SizedBox(height: 20),
 
-                  // Fund Raises table
+                  // Fund Eyanot table
                   ..._buildFundDonationPDFContent(donationStats),
                 ],
               );
@@ -1302,7 +1300,7 @@ class _ReportsTabState extends State<ReportsTab> {
 
     return [
       pw.Text(
-        'Donation Summary',
+        'Eyanot Summary',
         style: pw.TextStyle(
           fontSize: 14,
           fontWeight: pw.FontWeight.bold,
@@ -1315,9 +1313,9 @@ class _ReportsTabState extends State<ReportsTab> {
           pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Total Donations: ${donationStats['totalDonations']}', style: const pw.TextStyle(fontSize: 10)),
-              pw.Text('Monthly Donations: ${monthlyDonations.length}', style: const pw.TextStyle(fontSize: 10)),
-              pw.Text('Fund Raises: ${fundDonations.length}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Total Eyanot: ${donationStats['totalDonations']}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Monthly Eyanot: ${monthlyDonations.length}', style: const pw.TextStyle(fontSize: 10)),
+              pw.Text('Fund Eyanot: ${fundDonations.length}', style: const pw.TextStyle(fontSize: 10)),
             ],
           ),
           pw.Column(
@@ -1342,10 +1340,9 @@ class _ReportsTabState extends State<ReportsTab> {
       pw.Text('Verified: ${donationStats['verifiedCount']}', style: const pw.TextStyle(fontSize: 10)),
       pw.Text('Pending: ${donationStats['pendingCount']}', style: const pw.TextStyle(fontSize: 10)),
       pw.Text('Rejected: ${donationStats['rejectedCount']}', style: const pw.TextStyle(fontSize: 10)),
-      // pw.Text('Verification Rate: ${_safeParseDouble(donationStats['verificationRate']).toStringAsFixed(1)}%', style: const pw.TextStyle(fontSize: 10)),
       pw.SizedBox(height: 20),
       pw.Text(
-        'Note: Detailed Monthly Donations and Fund Raises reports are on separate pages.',
+        'Note: Detailed Monthly Eyanot and Fund Eyanot reports are on separate pages.',
         style: pw.TextStyle(
           fontSize: 9,
           fontStyle: pw.FontStyle.italic,
@@ -1360,7 +1357,7 @@ class _ReportsTabState extends State<ReportsTab> {
     as List?)?.cast<Map<String, dynamic>>() ?? [];
 
     if (monthlyDonations.isEmpty) {
-      return [pw.Text('No monthly donation records found.')];
+      return [pw.Text('No monthly Eyanot records found.')];
     }
 
     return [
@@ -1456,11 +1453,11 @@ class _ReportsTabState extends State<ReportsTab> {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Monthly Donations Summary:',
+                'Monthly Eyanot Summary:',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
               ),
               pw.SizedBox(height: 5),
-              pw.Text('Total Donations: ${monthlyDonations.length}', style: const pw.TextStyle(fontSize: 9)),
+              pw.Text('Total Eyanot: ${monthlyDonations.length}', style: const pw.TextStyle(fontSize: 9)),
               pw.Text('Total Amount: BDT ${_safeParseDouble(donationStats['totalMonthlyAmount']).toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 9)),
             ],
           ),
@@ -1473,7 +1470,7 @@ class _ReportsTabState extends State<ReportsTab> {
     final fundDonations = (donationStats['fundDonations'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
     if (fundDonations.isEmpty) {
-      return [pw.Text('No fund raise records found.')];
+      return [pw.Text('No fund Eyanot records found.')];
     }
 
     return [
@@ -1522,7 +1519,7 @@ class _ReportsTabState extends State<ReportsTab> {
             final date = (donation['createdAt'] as DateTime?) ?? (donation['donatedAt'] as DateTime?) ?? DateTime.now();
             final amount = _safeParseDouble(donation['amount'] ?? 0.0);
             final status = (donation['status'] as String? ?? 'pending').toUpperCase();
-            final fundName = donation['fundName']?.toString() ?? 'Fund Raise';
+            final fundName = donation['fundName']?.toString() ?? 'Fund Eyanot';
             final transactionId = donation['transactionId']?.toString() ?? 'N/A';
             final paymentMethod = donation['paymentMethod']?.toString() ?? 'Unknown';
 
@@ -1565,11 +1562,11 @@ class _ReportsTabState extends State<ReportsTab> {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Fund Raises Summary:',
+                'Fund Eyanot Summary:',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
               ),
               pw.SizedBox(height: 5),
-              pw.Text('Total Fund Raises: ${fundDonations.length}', style: const pw.TextStyle(fontSize: 9)),
+              pw.Text('Total Fund Eyanot: ${fundDonations.length}', style: const pw.TextStyle(fontSize: 9)),
               pw.Text('Total Amount: BDT ${_safeParseDouble(donationStats['totalFundAmount']).toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 9)),
             ],
           ),
@@ -1577,16 +1574,16 @@ class _ReportsTabState extends State<ReportsTab> {
       ),
     ];
   }
-  // Also update the UI text to use "BDT" instead of "৳"
+  // Also update the UI text to use "Eyanot" instead of "Donation"
   Widget _buildDonationStat(String label, String value, IconData icon, Color color) {
-    // Replace ৳ with BDT in value
-    String displayValue = value.replaceAll('৳', 'BDT ');
+    // Replace "Donation" with "Eyanot" in labels
+    String displayLabel = label.replaceAll('Donation', 'Eyanot').replaceAll('Donations', 'Eyanot');
     return Column(
       children: [
         Icon(icon, color: color, size: 24),
         const SizedBox(height: 4),
         Text(
-          displayValue,
+          value,
           style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -1594,7 +1591,7 @@ class _ReportsTabState extends State<ReportsTab> {
           ),
         ),
         Text(
-          label,
+          displayLabel,
           style: const TextStyle(
             color: Colors.black54,
             fontSize: 12,
@@ -1696,7 +1693,7 @@ class _ReportsTabState extends State<ReportsTab> {
                         ),
                         DropdownMenuItem(
                           value: 'donations',
-                          child: Text('Complete Donations History',
+                          child: Text('Complete Eyanot History',
                               style: TextStyle(color: Colors.black)),
                         ),
                       ],
@@ -1947,7 +1944,7 @@ class _ReportsTabState extends State<ReportsTab> {
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
-                            'Donation History: Complete All-Time Record',
+                            'Eyanot History: Complete All-Time Record',
                             style: TextStyle(
                               color: Colors.green[700],
                               fontSize: 11,
@@ -1965,7 +1962,7 @@ class _ReportsTabState extends State<ReportsTab> {
               ],
             ),
             const SizedBox(height: 16),
-            // Quick Stats Row - Update to use BDT
+            // Quick Stats Row - Update to use Eyanot
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -1992,8 +1989,8 @@ class _ReportsTabState extends State<ReportsTab> {
                   ),
                   const SizedBox(width: 12),
                   _buildQuickStat(
-                    'Donations',
-                    'BDT ${_safeParseDouble(report['donationStats']['totalAmount']).toStringAsFixed(0)}', // Changed from ৳ to BDT
+                    'Eyanot',
+                    'BDT ${_safeParseDouble(report['donationStats']['totalAmount']).toStringAsFixed(0)}',
                     Icons.attach_money,
                     Colors.purple,
                   ),
@@ -2090,18 +2087,18 @@ class _ReportsTabState extends State<ReportsTab> {
               '${report['taskStats']['completedTasks']} of ${report['taskStats']['totalTasks']} tasks',
             ),
             _buildPerformanceCard(
-              'Total Donations',
-              'BDT ${_safeParseDouble(donationStats['totalAmount']).toStringAsFixed(0)}', // Changed from ৳ to BDT
+              'Total Eyanot',
+              'BDT ${_safeParseDouble(donationStats['totalAmount']).toStringAsFixed(0)}',
               Icons.attach_money,
               Colors.purple,
-              'All-time donation amount',
+              'All-time Eyanot amount',
             ),
             _buildPerformanceCard(
-              'Donation Verification',
+              'Eyanot Verification',
               '${_safeParseDouble(donationStats['verificationRate']).toStringAsFixed(1)}%',
               Icons.verified,
               _getPerformanceColor(_safeParseDouble(donationStats['verificationRate'])),
-              '${_safeParseInt(donationStats['verifiedCount'])} verified donations',
+              '${_safeParseInt(donationStats['verifiedCount'])} verified Eyanot',
             ),
             _buildPerformanceCard(
               'Average Completion',
@@ -2521,7 +2518,7 @@ class _ReportsTabState extends State<ReportsTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Complete Donation History',
+              'Complete Eyanot History',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -2544,7 +2541,7 @@ class _ReportsTabState extends State<ReportsTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Showing ALL donation records from:',
+                            'Showing ALL Eyanot records from:',
                             style: TextStyle(
                               color: Colors.green[800],
                               fontSize: 12,
@@ -2585,13 +2582,13 @@ class _ReportsTabState extends State<ReportsTab> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildDonationStat(
-                      'Total Amount',
+                      'Total Eyanot',
                       'BDT ${_safeParseDouble(donationStats['totalAmount']).toStringAsFixed(2)}',
                       Icons.attach_money,
                       Colors.green,
                     ),
                     _buildDonationStat(
-                      'Total Donations',
+                      'Total Eyanot',
                       '${_safeParseInt(donationStats['totalDonations'])}',
                       Icons.list,
                       Colors.blue,
@@ -2641,14 +2638,6 @@ class _ReportsTabState extends State<ReportsTab> {
                         _getPerformanceColor(_safeParseDouble(donationStats['verificationRate'])),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    // Text(
-                    //   'Verification Rate: ${_safeParseDouble(donationStats['verificationRate']).toStringAsFixed(1)}%',
-                    //   style: TextStyle(
-                    //     color: _getPerformanceColor(_safeParseDouble(donationStats['verificationRate'])),
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -2694,7 +2683,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Monthly',
+                                  'Monthly Eyanot',
                                   style: TextStyle(
                                     color: showMonthly ? Colors.green : Colors.black54,
                                     fontWeight: showMonthly ? FontWeight.bold : FontWeight.normal,
@@ -2734,7 +2723,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Fund',
+                                  'Fund Eyanot',
                                   style: TextStyle(
                                     color: showFund ? Colors.blue : Colors.black54,
                                     fontWeight: showFund ? FontWeight.bold : FontWeight.normal,
@@ -2756,7 +2745,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           child: Center(
                             child: Chip(
                               label: Text(
-                                '${monthlyDonations.length} Donations',
+                                '${monthlyDonations.length} Eyanot',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -2772,7 +2761,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           child: Center(
                             child: Chip(
                               label: Text(
-                                '${fundDonations.length} Donations',
+                                '${fundDonations.length} Eyanot',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -2824,7 +2813,6 @@ class _ReportsTabState extends State<ReportsTab> {
               ),
             ),
 
-
             const SizedBox(height: 16),
 
             // Section Header with count
@@ -2832,7 +2820,7 @@ class _ReportsTabState extends State<ReportsTab> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  showMonthly ? 'Monthly Donations' : 'Fund Raises',
+                  showMonthly ? 'Monthly Eyanot' : 'Fund Eyanot',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -2852,14 +2840,14 @@ class _ReportsTabState extends State<ReportsTab> {
             ),
             const SizedBox(height: 8),
 
-            // Show donations based on selection
+            // Show Eyanot based on selection
             if (showMonthly && monthlyDonations.isEmpty)
-              _buildEmptyState('No monthly donation records found', Icons.calendar_today)
+              _buildEmptyState('No monthly Eyanot records found', Icons.calendar_today)
             else if (!showMonthly && fundDonations.isEmpty)
-              _buildEmptyState('No fund raise records found', Icons.volunteer_activism)
+              _buildEmptyState('No fund Eyanot records found', Icons.volunteer_activism)
             else
               ...(showMonthly ? monthlyDonations : fundDonations).map((donation) {
-                // FIX: Handle null date safely
+                // Handle null date safely
                 DateTime? date;
                 if (donation.containsKey('paidAt') && donation['paidAt'] != null) {
                   date = donation['paidAt'] as DateTime?;
@@ -2880,7 +2868,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 // Use helper method for proper month name display
                 final details = isMonthly
                     ? _getMonthNameFromDonation(donation, effectiveDate)
-                    : (donation['fundName']?.toString() ?? 'Fund Raise');
+                    : (donation['fundName']?.toString() ?? 'Fund Eyanot');
 
                 return Card(
                   color: Colors.white,

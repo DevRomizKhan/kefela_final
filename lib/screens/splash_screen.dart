@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
 
       // Navigate after 3 seconds
-      await Future.delayed(const Duration(seconds: 15));
+      await Future.delayed(const Duration(seconds: 5));
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const AuthWrapper()),

@@ -216,7 +216,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final List<Map<String, dynamic>> mainNavItems = [
       {'icon': Icons.dashboard, 'label': 'Home'},
       {'icon': Icons.analytics, 'label': 'Reports'},
-      {'icon': Icons.volunteer_activism, 'label': 'Donation'},
+      {'icon': Icons.volunteer_activism, 'label': 'Eyanot'},
       {'icon': Icons.manage_accounts, 'label': 'Management'},
       {'icon': Icons.logout, 'label': 'Logout'},
     ];

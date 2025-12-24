@@ -20,7 +20,7 @@ class _DonationTabState extends State<DonationTab> {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text(
-            'Donation Management',
+            'Eyanot Management',
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -31,7 +31,7 @@ class _DonationTabState extends State<DonationTab> {
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.green,
             tabs: [
-              Tab(text: 'General Donation'),
+              Tab(text: 'General Eyanot'),
               Tab(text: 'Fund Raise'),
             ],
           ),
@@ -126,7 +126,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                   const Icon(Icons.attach_money, color: Colors.green, size: 28),
                   const SizedBox(width: 12),
                   const Text(
-                    'Monthly Donations',
+                    'Monthly Eyanot',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -164,12 +164,12 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                         Icon(Icons.attach_money, size: 64, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
-                          'No monthly donations assigned',
+                          'No monthly eyanot assigned',
                           style: TextStyle(color: Colors.black54),
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Tap the + button to assign monthly donation',
+                          'Tap the + button to assign monthly eyanot',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -311,7 +311,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
           onDonationUpdated: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Monthly donation updated successfully!'),
+                content: Text('Monthly eyanot updated successfully!'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -326,8 +326,8 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('Delete Monthly Donation', style: TextStyle(color: Colors.black)),
-        content: Text('Are you sure you want to delete monthly donation for $memberName?',
+        title: const Text('Delete Monthly Eyanot', style: TextStyle(color: Colors.black)),
+        content: Text('Are you sure you want to delete monthly eyanot for $memberName?',
             style: const TextStyle(color: Colors.black54)),
         actions: [
           TextButton(
@@ -342,7 +342,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Monthly donation deleted successfully!'),
+                      content: Text('Monthly eyanot deleted successfully!'),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -351,7 +351,7 @@ class _GeneralDonationSectionState extends State<GeneralDonationSection> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error deleting donation: $e'),
+                      content: Text('Error deleting eyanot: $e'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -464,7 +464,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Assign Monthly Donation',
+          'Assign Monthly Eyanot',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -551,7 +551,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Monthly Donation Information',
+                                'Monthly Eyanot Information',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -563,7 +563,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
                         ),
                         SizedBox(height: 12),
                         Text(
-                          '• This amount will be assigned as monthly donation for the selected member\n• Member can pay this amount month-wise from their panel\n• Member can pay the exact amount or any amount they wish\n• Payments require admin verification',
+                          '• This amount will be assigned as monthly eyanot for the selected member\n• Member can pay this amount month-wise from their panel\n• Member can pay the exact amount or any amount they wish\n• Payments require admin verification',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -603,7 +603,7 @@ class _AssignMonthlyDonationPageState extends State<AssignMonthlyDonationPage> {
                         strokeWidth: 2,
                       ),
                     )
-                        : const Text('Assign Monthly Donation'),
+                        : const Text('Assign Monthly Eyanot'),
                   ),
                 ),
               ],
@@ -685,7 +685,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Donation Details',
+          'Eyanot Details',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -708,7 +708,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Monthly Donation Information',
+                      'Monthly Eyanot Information',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -1001,7 +1001,7 @@ class _MonthlyDonationDetailsPageState extends State<MonthlyDonationDetailsPage>
   String _getVerificationMessage(String? status) {
     switch (status) {
       case 'verified':
-        return '✅ Verified - Legal Donation';
+        return '✅ Verified - Legal Eyanot';
       case 'rejected':
         return '❌ Rejected - Not Valid';
       default:
@@ -1768,7 +1768,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
 
             // Donations List
             const Text(
-              'Donations Received',
+              'Eyanot Received',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -1803,7 +1803,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                           Icon(Icons.volunteer_activism, size: 64, color: Colors.grey),
                           SizedBox(height: 16),
                           Text(
-                            'No donations yet',
+                            'No eyanot yet',
                             style: TextStyle(color: Colors.black54),
                           ),
                           SizedBox(height: 8),
@@ -1895,8 +1895,8 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                           trailing: PopupMenuButton<String>(
                             onSelected: (value) => _updateDonationStatus(donationId, value, donation),
                             itemBuilder: (context) => [
-                              const PopupMenuItem(value: 'verified', child: Text('Verify Donation')),
-                              const PopupMenuItem(value: 'rejected', child: Text('Reject Donation')),
+                              const PopupMenuItem(value: 'verified', child: Text('Verify Eyanot')),
+                              const PopupMenuItem(value: 'rejected', child: Text('Reject Eyanot')),
                               const PopupMenuItem(value: 'pending', child: Text('Mark Pending')),
                             ],
                             child: Container(
@@ -1936,7 +1936,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         title: Text(
-          '${status.toUpperCase()} Donation',
+          '${status.toUpperCase()} Eyanot',
           style: const TextStyle(color: Colors.black),
         ),
         content: Column(
@@ -1944,7 +1944,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Donation: ৳${donation['amount']?.toStringAsFixed(2)} by ${donation['memberName']}',
+              'Eyanot: ৳${donation['amount']?.toStringAsFixed(2)} by ${donation['memberName']}',
               style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -1992,7 +1992,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Donation ${status} successfully!'),
+                      content: Text('Eyanot ${status} successfully!'),
                       backgroundColor: status == 'verified' ? Colors.green : Colors.black,
                     ),
                   );
@@ -2002,7 +2002,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error updating donation: $e'),
+                      content: Text('Error updating eyanot: $e'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -2013,7 +2013,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
               backgroundColor: status == 'verified' ? Colors.green : Colors.black,
               foregroundColor: Colors.white,
             ),
-            child: Text('${status.toUpperCase()} DONATION'),
+            child: Text('${status.toUpperCase()} EYANOT'),
           ),
         ],
       ),
@@ -2061,7 +2061,7 @@ class _FundRaiseDetailsPageState extends State<FundRaiseDetailsPage> {
   String _getVerificationMessage(String? status) {
     switch (status) {
       case 'verified':
-        return '✅ Verified - Legal Donation';
+        return '✅ Verified - Legal Eyanot';
       case 'rejected':
         return '❌ Rejected - Not Valid';
       default:
@@ -2421,7 +2421,7 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Edit Monthly Donation',
+          'Edit Monthly Eyanot',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -2564,7 +2564,7 @@ class _EditMonthlyDonationPageState extends State<EditMonthlyDonationPage> {
                   ),
                 )
                     : const Text(
-                  'Update Monthly Donation',
+                  'Update Monthly Eyanot',
                   style: TextStyle(fontSize: 16),
                 ),
               ),

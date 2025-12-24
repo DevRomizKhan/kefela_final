@@ -469,11 +469,11 @@ class _MemberActivityTabState extends State<MemberActivityTab>
                     const SizedBox(height: 12),
                     // ADD THIS NEW DONATION REPORTS CARD
                     _buildSummaryCard(
-                      title: 'Donation Reports',
+                      title: 'Eyanot Reports',
                       count: ' ',
                       subtitle: 'Monthly & Fund Raise History',
                       icon: Icons.attach_money,
-                      color: Colors.purple,
+                      color: Colors.green,
                       onTap: _openDonationReports,
                     ),
                   ],

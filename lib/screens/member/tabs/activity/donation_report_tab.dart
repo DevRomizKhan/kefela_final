@@ -22,7 +22,7 @@ class _DonationReportTabState extends State<DonationReportTab> {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text(
-            'Donation Reports',
+            'Eyanot Reports', // Changed from 'Donation Reports'
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class _DonationReportTabState extends State<DonationReportTab> {
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.green,
             tabs: [
-              Tab(text: 'Monthly Donations'),
+              Tab(text: 'Monthly Eyanot'), // Changed from 'Monthly Donations'
               Tab(text: 'Fund Raises'),
             ],
           ),
@@ -49,7 +49,7 @@ class _DonationReportTabState extends State<DonationReportTab> {
   }
 }
 
-// ==================== MONTHLY DONATION REPORT SECTION ====================
+// ==================== MONTHLY EYANOT REPORT SECTION ====================
 class MonthlyDonationReportSection extends StatefulWidget {
   const MonthlyDonationReportSection({super.key});
 
@@ -88,7 +88,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
           _buildSummaryCards(),
           const SizedBox(height: 16),
 
-          // Donation List
+          // Eyanot List
           Expanded(
             child: _buildDonationList(),
           ),
@@ -247,9 +247,9 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Total Paid',
+                'Total Eyanot', // Changed from 'Total Paid'
                 '৳${totalAmount.toStringAsFixed(2)}',
-                Colors.green,
+                Colors.black,
               ),
             ),
             const SizedBox(width: 8),
@@ -257,7 +257,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
               child: _buildSummaryCard(
                 'Verified',
                 '৳${verifiedAmount.toStringAsFixed(2)}',
-                Colors.green,
+                Colors.black,
               ),
             ),
             const SizedBox(width: 8),
@@ -265,7 +265,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
               child: _buildSummaryCard(
                 'Pending',
                 '৳${pendingAmount.toStringAsFixed(2)}',
-                Colors.orange,
+                Colors.black,
               ),
             ),
           ],
@@ -276,7 +276,6 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
 
   Widget _buildSummaryCard(String title, String value, Color color) {
     return Card(
-      color: color.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -331,7 +330,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
                 Icon(Icons.payment, size: 64, color: Colors.grey),
                 SizedBox(height: 16),
                 Text(
-                  'No donation records found',
+                  'No eyanot records found', // Changed from 'No donation records found'
                   style: TextStyle(color: Colors.black54),
                 ),
               ],
@@ -384,7 +383,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
       case 'verified':
         statusColor = Colors.green;
         statusIcon = Icons.verified;
-        statusText = 'Verified - Legal Donation';
+        statusText = 'Verified'; // Changed from 'Legal Donation'
         break;
       case 'rejected':
         statusColor = Colors.red;
@@ -410,7 +409,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Monthly Donation',
+                        'Monthly Eyanot', // Changed from 'Monthly Donation'
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -474,7 +473,7 @@ class _MonthlyDonationReportSectionState extends State<MonthlyDonationReportSect
                           ),
                         ),
                         Text(
-                          'Paid on: ${DateFormat('MMM dd, yyyy - hh:mm a').format(paidAt)}',
+                          'Eyanot paid on: ${DateFormat('MMM dd, yyyy - hh:mm a').format(paidAt)}', // Changed from 'Paid on'
                           style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 12,
@@ -671,7 +670,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'all', child: Text('All Donations')),
+                      DropdownMenuItem(value: 'all', child: Text('All Eyanot')), // Changed from 'All Donations'
                       DropdownMenuItem(value: 'verified', child: Text('Verified Only')),
                       DropdownMenuItem(value: 'pending', child: Text('Pending Only')),
                       DropdownMenuItem(value: 'rejected', child: Text('Rejected Only')),
@@ -766,9 +765,9 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
           children: [
             Expanded(
               child: _buildFundSummaryCard(
-                'Total Donated',
+                'Total Eyanot', // Changed from 'Total Donated'
                 '৳${totalAmount.toStringAsFixed(2)}',
-                Colors.purple,
+                Colors.black,
               ),
             ),
             const SizedBox(width: 8),
@@ -782,9 +781,9 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
             const SizedBox(width: 8),
             Expanded(
               child: _buildFundSummaryCard(
-                'Total Donations',
+                'Total Eyanot', // Changed from 'Total Donations'
                 totalDonations.toString(),
-                Colors.blue,
+                Colors.black,
               ),
             ),
           ],
@@ -795,7 +794,6 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
 
   Widget _buildFundSummaryCard(String title, String value, Color color) {
     return Card(
-      color: color.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -845,7 +843,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
                 Icon(Icons.volunteer_activism, size: 64, color: Colors.grey),
                 SizedBox(height: 16),
                 Text(
-                  'No fund donations found',
+                  'No fund eyanot found', // Changed from 'No fund donations found'
                   style: TextStyle(color: Colors.black54),
                 ),
               ],
@@ -874,7 +872,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
         if (filteredDonations.isEmpty) {
           return const Center(
             child: Text(
-              'No donations match the selected filters',
+              'No eyanot match the selected filters', // Changed from 'No donations match'
               style: TextStyle(color: Colors.black54),
             ),
           );
@@ -908,7 +906,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
       case 'verified':
         statusColor = Colors.green;
         statusIcon = Icons.verified;
-        statusText = 'Verified - Legal Donation';
+        statusText = 'Verified'; // Changed from 'Legal Donation'
         break;
       case 'rejected':
         statusColor = Colors.red;
@@ -941,7 +939,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
                         ),
                       ),
                       Text(
-                        'Fund Raise Donation',
+                        'Fund Raise Eyanot', // Changed from 'Fund Raise Donation'
                         style: const TextStyle(
                           color: Colors.black54,
                           fontSize: 14,
@@ -997,7 +995,7 @@ class _FundRaiseReportSectionState extends State<FundRaiseReportSection> {
                           ),
                         ),
                         Text(
-                          'Donated on: ${DateFormat('MMM dd, yyyy - hh:mm a').format(donatedAt)}',
+                          'Eyanot donated on: ${DateFormat('MMM dd, yyyy - hh:mm a').format(donatedAt)}', // Changed from 'Donated on'
                           style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 12,

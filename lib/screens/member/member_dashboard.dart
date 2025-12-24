@@ -81,7 +81,7 @@ class _MemberDashboardState extends State<MemberDashboard> {
   ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.group),
-        label: 'Donation',
+        label: 'Eyanot',
       ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.book),
